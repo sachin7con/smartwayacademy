@@ -9,40 +9,51 @@ export default function SmartWayAcademyWebsite() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-24">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 className="text-5xl font-bold leading-tight mb-6">
-              Build Your Future With SmartWayAcademy
-            </h2>
+      <section className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-16 md:py-24 overflow-hidden">
+  <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-            <p className="text-lg text-blue-100 mb-8">
-              Quality coaching for Classes 8th to 12th with expert guidance,
-              personalized attention, and modern learning methods.
-            </p>
+    {/* LEFT CONTENT */}
+    <div>
 
-            <div className="flex gap-4 flex-wrap">
-              <button className="bg-white text-blue-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition">
-                Explore Courses
-              </button>
+      <p className="inline-block bg-white/10 px-4 py-2 rounded-full text-sm mb-6">
+        Welcome to SmartWayAcademy
+      </p>
 
-              <button className="border border-white px-6 py-3 rounded-xl font-semibold hover:bg-white hover:text-blue-700 transition">
-                Contact Us
-              </button>
-            </div>
-          </div>
+      <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6">
+        Build Your Future With SmartWayAcademy
+      </h2>
 
-          <div>
-          <img
-          src={classroomImage}
-          alt="SmartWay Academy Classroom"
-          className="w-full h-[450px] object-cover rounded-3xl shadow-2xl"
-          />
-        </div>
+      <p className="text-base sm:text-lg text-blue-100 mb-8 leading-relaxed">
+        Quality coaching for Classes 8th to 12th with expert guidance,
+        personalized attention, and modern learning methods.
+      </p>
 
+      <div className="flex flex-col sm:flex-row gap-4">
 
-        </div>
-      </section>
+        <button className="bg-white text-blue-700 px-6 py-4 rounded-2xl font-semibold hover:bg-gray-100 transition">
+          Explore Courses
+        </button>
+
+        <button className="border border-white px-6 py-4 rounded-2xl font-semibold hover:bg-white hover:text-blue-700 transition">
+          Contact Us
+        </button>
+
+      </div>
+    </div>
+
+    {/* RIGHT IMAGE */}
+    <div className="flex justify-center">
+
+      <img
+        src={classroomImage}
+        alt="SmartWay Academy Classroom"
+        className="w-full max-w-md md:max-w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover rounded-3xl shadow-2xl border-4 border-white/20"
+      />
+
+    </div>
+
+  </div>
+</section>
 
       {/* Courses Section */}
       <section className="py-20 max-w-7xl mx-auto px-6">
