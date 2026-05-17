@@ -1,6 +1,7 @@
 // SGN
 import classroomImage from "./assets/class2.jpeg";
 import Navbar from "./components/Navbar";
+import {motion } from "framer-motion";
 
 export default function SmartWayAcademyWebsite() {
   return (
@@ -13,7 +14,11 @@ export default function SmartWayAcademyWebsite() {
   <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
     {/* LEFT CONTENT */}
-    <div>
+    <motion.div
+     initial={{ opacity: 0, x: -50}}
+     animate={{ opacity: 1, x:0}}
+     transition={{ duration: 0.8 }}
+    >
 
       <p className="inline-block bg-white/10 px-4 py-2 rounded-full text-sm mb-6">
         Welcome to SmartWayAcademy
@@ -39,10 +44,15 @@ export default function SmartWayAcademyWebsite() {
         </button>
 
       </div>
-    </div>
+    </motion.div>
 
     {/* RIGHT IMAGE */}
-    <div className="flex justify-center">
+    <motion.div 
+    className="flex justify-center"
+    initial={{ opacity:0, x:50}}
+    animate={{ opacity:1, x:0}}
+    transition={{duration:1}}
+    >
 
       <img
         src={classroomImage}
@@ -50,7 +60,7 @@ export default function SmartWayAcademyWebsite() {
         className="w-full max-w-md md:max-w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover rounded-3xl shadow-2xl border-4 border-white/20"
       />
 
-    </div>
+    </motion.div>
 
   </div>
 </section>
