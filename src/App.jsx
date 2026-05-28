@@ -3,6 +3,8 @@ import classroomImage from "./assets/class2.jpeg";
 import Navbar from "./components/Navbar";
 import { useState } from "react";
 import axios from "axios";
+import { Routes, Route } from "react-router-dom";
+import Admin from "./pages/Admin";
 
 import {motion } from "framer-motion";
 
@@ -44,7 +46,9 @@ export default function SmartWayAcademyWebsite() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+
+    <Routes>
+    <Route path="/" element={<div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Navbar */}
       <Navbar />
 
@@ -287,6 +291,16 @@ export default function SmartWayAcademyWebsite() {
           © 2026 SmartWayAcademy. All Rights Reserved.
         </p>
       </footer>
-    </div>
+    </div>} 
+     />
+
+         {/* ADMIN PAGE */}
+    <Route
+      path="/admin"
+      element={<Admin />}
+    />
+
+</Routes>
   );
 }
+

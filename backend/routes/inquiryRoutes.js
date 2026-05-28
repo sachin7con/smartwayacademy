@@ -27,4 +27,18 @@ router.get("/", async (req, res) =>{
     }
 })
 
+//delete inquiry route
+router.delete("/:id",async (req, res) =>{
+    try{
+        await Inquiry.findOneAndDelete(req.params.id)
+
+        res.json({success: true, message: "inquiry deleted", })
+    }
+    catch(error){
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});  
+
 module.exports = router;
