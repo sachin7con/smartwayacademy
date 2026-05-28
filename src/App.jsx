@@ -1,9 +1,48 @@
 // SGN
 import classroomImage from "./assets/class2.jpeg";
 import Navbar from "./components/Navbar";
+import { useState } from "react";
+import axios from "axios";
+
 import {motion } from "framer-motion";
 
 export default function SmartWayAcademyWebsite() {
+    const [formData, setFormData] = useState({
+      name: "",
+      studentClass: "",
+      phone: "",
+    })
+
+    const handleChange = (e) =>{
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    };
+
+    const handleSubmit = async (e) =>{
+      e.preventDefault();
+      
+      try{
+        const response = await axios.post(
+          "http://localhost:5000/api/inquiries", formData
+        );
+
+        alert("Inquiry Submitted Successfully")
+
+        setFormData({
+          name: "",
+          studentClass: "",
+          phone:"",
+        });
+      } catch (error) {
+        console.log(error);
+
+        alert("Something went wrong");
+      }
+    }
+
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Navbar */}
@@ -188,32 +227,59 @@ export default function SmartWayAcademyWebsite() {
           <div className="bg-white text-gray-800 p-8 rounded-3xl shadow-2xl">
             <h3 className="text-2xl font-bold mb-6">Send Message</h3>
 
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Your Name"
                 className="w-full p-3 border rounded-xl"
               />
 
               <input
-                type="email"
-                placeholder="Your Email"
+                type="text"
+                name="studentClass"
+                value={formData.studentClass}
+                onChange={handleChange}
+                placeholder="Class"
                 className="w-full p-3 border rounded-xl"
               />
 
-              <textarea
+              <input 
+               type="tel"
+               name="phone"
+               placeholder="Phone number"
+               value={formData.phone}
+               onChange={handleChange}
+               className="w-full p-3 border rounded-xl"
+              />
+              {/* <textarea
                 rows="4"
                 placeholder="Your Message"
-                className="w-full p-3 border rounded-xl"
-              ></textarea>
+                className="w-full p-3 bord  er rounded-xl"
+              ></textarea> */}
 
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition w-full">
-                Send Message
+              <button
+                type="submit"
+                className="w-full bg-yellow-400 hover:bg-yellow-300 text-gray-900 py-3 rounded-xl font-bold transition"
+                >
+                Submit Inquiry
               </button>
             </form>
           </div>
         </div>
       </section>
+
+      <a 
+        href="https://wa.me/917906826818"
+        target="_blank"
+        rel="noreferrer"
+        className="fixed bottom-6 right-6 bg-green-500 text-white px-5 py-3 rounded-full shadow-2xl z-50"
+      >
+          WhatsApp 
+
+      </a>
 
       {/* Footer */}
       <footer className="bg-black text-gray-400 text-center py-6">
