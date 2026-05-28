@@ -25,7 +25,7 @@ export default function SmartWayAcademyWebsite() {
       
       try{
         const response = await axios.post(
-          "http://localhost:5000/api/inquiries", formData
+          "https://smartwayacademy.onrender.com/api/inquiries", formData
         );
 
         alert("Inquiry Submitted Successfully")
