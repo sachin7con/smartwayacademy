@@ -6,7 +6,9 @@ import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import Admin from "./pages/Admin";
 
+import Login from "./pages/Login";
 import {motion } from "framer-motion";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function SmartWayAcademyWebsite() {
     const [formData, setFormData] = useState({
@@ -294,10 +296,16 @@ export default function SmartWayAcademyWebsite() {
     </div>} 
      />
 
+         {/* LOGIN PAGE */}
+    <Route path="/login" element={<Login />} />
+    
          {/* ADMIN PAGE */}
     <Route
       path="/admin"
-      element={<Admin />}
+      element={<ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
+      }
     />
 
 </Routes>

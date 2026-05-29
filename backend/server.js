@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const inquiryRoutes = require("./routes/inquiryRoutes");
 const cors = require("cors");
-+
+const adminRoutes = require("./routes/adminRoutes")
+
 require("dotenv").config();
 
 const app= express();
@@ -21,6 +22,7 @@ app.get("/", (req, res) =>{
 const PORT = process.env.PORT || 5000;
 
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(PORT, ()=>{
     console.log(`server running on port ${PORT}`);
