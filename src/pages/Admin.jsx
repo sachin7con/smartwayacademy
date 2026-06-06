@@ -4,6 +4,7 @@ import axios from "axios";
 export default function Admin() {
 
   const [inquiries, setInquiries] = useState([]);
+  const [search, setSearch] = useState("");
 
   // FETCH DATA
   const fetchInquiries = async () => {
@@ -19,6 +20,22 @@ export default function Admin() {
       console.log(error);
     }
   };
+
+  //UPDATE Status
+        const updateStatus = async (id, status) => {
+        try {
+            await axios.put(
+            `https://smartwayacademy.onrender.com/api/inquiries/${id}`,
+            { status }
+            );
+
+            fetchInquiries();
+
+        } catch (error) {
+            console.log(error);
+        }
+        };
+
 
   // DELETE INQUIRY
   const deleteInquiry = async (id) => {
@@ -42,6 +59,15 @@ export default function Admin() {
     fetchInquiries();
   }, []);
 
+const filteredInquiries = inquiries.filter((item) => {
+  return (
+    item.name.toLowerCase().includes(search.toLowerCase()) ||
+    item.phone.includes(search)
+  );
+});
+
+
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
 
@@ -51,6 +77,16 @@ export default function Admin() {
           <h1 className="text-4xl font-bold text-blue-700">
             SmartWayAcademy Admin
           </h1>
+
+          <div className="flex justify-between items-center mb-6">
+            <input
+                type="text"
+                placeholder="Search by Name or Phone"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border p-3 rounded-lg w-80"
+            />
+            </div>
 
           <div className="bg-blue-600 text-white px-5 py-2 rounded-xl">
             Total Inquiries: {inquiries.length}
@@ -70,6 +106,7 @@ export default function Admin() {
                   <th className="p-4 text-left">Class</th>
                   <th className="p-4 text-left">Phone</th>
                   <th className="p-4 text-left">Date</th>
+                  <th className="p-4 text-left">Status</th>
                   <th className="p-4 text-center">Action</th>
                 </tr>
 
@@ -77,7 +114,7 @@ export default function Admin() {
 
               <tbody>
 
-                {inquiries.map((item) => (
+                {filteredInquiries.map((item) => (
 
                   <tr
                     key={item._id}
@@ -98,6 +135,22 @@ export default function Admin() {
 
                     <td className="p-4">
                       {new Date(item.createdAt).toLocaleDateString()}
+                    </td>
+
+                    <td>
+                    <select
+                        value={item.status}
+                        onChange={(e) =>
+                        updateStatus(item._id, e.target.value)
+                        }
+                        className="border p-2 rounded"
+                    >
+                    <option value="New">New</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Admitted">Admitted</option>
+                    <option value="Not Interested">Not Interested</option>
+                    </select>
                     </td>
 
                     <td className="p-4 text-center">
