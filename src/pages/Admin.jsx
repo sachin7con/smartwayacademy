@@ -6,6 +6,15 @@ export default function Admin() {
   const [inquiries, setInquiries] = useState([]);
   const [search, setSearch] = useState("");
 
+  const totalLeads = inquiries.length;
+  const newLeads = inquiries.filter((item) => item.status === "New").length;
+  const contactedLeads = inquiries.filter((item) => item.status === "Contacted").length;
+  const interestedLeads= inquiries.filter((item) => item.status === "Interested").length;
+  const admittedLeads = inquiries.filter((item) => item.status === "Admitted").length;
+
+
+
+
   // FETCH DATA
   const fetchInquiries = async () => {
     try {
@@ -93,6 +102,38 @@ const filteredInquiries = inquiries.filter((item) => {
           </div>
         </div>
 
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+
+  <div className="bg-blue-600 text-white p-5 rounded-xl shadow">
+    <h3 className="text-sm">Total Leads</h3>
+    <p className="text-3xl font-bold">{totalLeads}</p>
+  </div>
+
+  <div className="bg-yellow-500 text-white p-5 rounded-xl shadow">
+    <h3 className="text-sm">New</h3>
+    <p className="text-3xl font-bold">{newLeads}</p>
+  </div>
+
+  <div className="bg-purple-500 text-white p-5 rounded-xl shadow">
+    <h3 className="text-sm">Contacted</h3>
+    <p className="text-3xl font-bold">{contactedLeads}</p>
+  </div>
+
+  <div className="bg-green-500 text-white p-5 rounded-xl shadow">
+    <h3 className="text-sm">Interested</h3>
+    <p className="text-3xl font-bold">{interestedLeads}</p>
+  </div>
+
+  <div className="bg-emerald-700 text-white p-5 rounded-xl shadow">
+    <h3 className="text-sm">Admitted</h3>
+    <p className="text-3xl font-bold">{admittedLeads}</p>
+  </div>
+
+</div>
+
+
+
+
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
           <div className="overflow-x-auto">
@@ -107,6 +148,7 @@ const filteredInquiries = inquiries.filter((item) => {
                   <th className="p-4 text-left">Phone</th>
                   <th className="p-4 text-left">Date</th>
                   <th className="p-4 text-left">Status</th>
+                  <th className="p-4 text-left">WhatsApp</th>
                   <th className="p-4 text-center">Action</th>
                 </tr>
 
@@ -152,6 +194,15 @@ const filteredInquiries = inquiries.filter((item) => {
                     <option value="Not Interested">Not Interested</option>
                     </select>
                     </td>
+
+                    <td className="p-4 text-center"> 
+                        <a 
+                         href={`https://wa.me/91${item.phone}`}
+                         target="_blank"
+                         rel="noreferrer"
+                         className="bg-green-500 text-white px-3 py-2 rounded-lg"
+                         >WhatsApp</a>
+                         </td>
 
                     <td className="p-4 text-center">
 
