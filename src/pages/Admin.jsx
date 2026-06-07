@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import {saveAs} from "file-saver";
 
 export default function Admin() {
 
@@ -75,6 +77,42 @@ const filteredInquiries = inquiries.filter((item) => {
   );
 });
 
+const exportToExcel = () => {
+    const data = inquiries.map((item) => ({
+        Name: item.name,
+        Class: item.studentClass,
+        Phone: item.phone,
+        Status: item.status,
+        Date: new Date(item.createdAt).toLocaleDateString(),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook, worksheet, "Inquiries"
+    );
+
+     const excelBuffer = XLSX.write(
+    workbook,
+    {
+      bookType: "xlsx",
+      type: "array",
+    }
+  );
+
+  const fileData = new Blob(
+    [excelBuffer],
+    {
+      type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    }
+  );
+
+  saveAs(fileData, "SmartWay-Leads.xlsx");
+};
+
+
 
 
   return (
@@ -95,6 +133,13 @@ const filteredInquiries = inquiries.filter((item) => {
                 onChange={(e) => setSearch(e.target.value)}
                 className="border p-3 rounded-lg w-80"
             />
+
+            <button
+                onClick={exportToExcel}
+                className="bg-green-600 text-white px-5 py-3 rounded-xl hover:bg-green-700"
+                >
+                Export Excel
+                </button>
             </div>
 
           <div className="bg-blue-600 text-white px-5 py-2 rounded-xl">
