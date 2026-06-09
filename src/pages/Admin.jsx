@@ -281,7 +281,7 @@ const exportToExcel = () => {
 
                      <td>
                         <textarea
-                            rows="3"
+                            rows="2"
                             className="border p-2 rounded w-full"
                             value={editedData[item._id]?.notes ?? item.notes ?? ""}
                             onChange={(e) =>
