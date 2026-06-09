@@ -36,7 +36,11 @@
 
         const inquiry = await Inquiry.findByIdAndUpdate(
             req.params.id,
-            { status: req.body.status },
+            { status: req.body.status,
+                notes: req.body.notes,
+                followUpDate: req.body.followUpDate,
+
+             },
             { new: true }
         );
 

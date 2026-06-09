@@ -7,6 +7,7 @@ export default function Admin() {
 
   const [inquiries, setInquiries] = useState([]);
   const [search, setSearch] = useState("");
+  const [editedData, setEditedData] = useState({});
 
   const totalLeads = inquiries.length;
   const newLeads = inquiries.filter((item) => item.status === "New").length;
@@ -31,6 +32,32 @@ export default function Admin() {
       console.log(error);
     }
   };
+
+  //UPDATE NOTES
+  const updatedNotes = async(id, notes) => {
+    try{
+        await axios.put(`https://smartwayacademy.onrender.com/api/inquiries/${id}`, {notes})
+        
+        fetchInquiries();
+    
+    }catch(error){
+        console.log(error)
+    }
+  }
+
+  //SAVE Lead Details
+  const saveLeadDetails = async(id, status, notes, followUpDate ) =>{
+    try {
+        await axios.put(`https://smartwayacademy.onrender.com/api/inquiries/${id}`,
+            {status, notes, followUpDate,}
+        )
+        alert("Lead updated");
+        fetchInquiries();
+    }
+    catch (error){
+        console.log(error);
+    }
+  }
 
   //UPDATE Status
         const updateStatus = async (id, status) => {
@@ -194,6 +221,9 @@ const exportToExcel = () => {
                   <th className="p-4 text-left">Date</th>
                   <th className="p-4 text-left">Status</th>
                   <th className="p-4 text-left">WhatsApp</th>
+                  <th className="p-4 text-center">Notes</th>
+                  <th className="p-4 text-left">Follow Up</th>
+                  <th className="p-4 text-center">Save</th>
                   <th className="p-4 text-center">Action</th>
                 </tr>
 
@@ -248,6 +278,62 @@ const exportToExcel = () => {
                          className="bg-green-500 text-white px-3 py-2 rounded-lg"
                          >WhatsApp</a>
                          </td>
+
+                     <td>
+                        <textarea
+                            rows="3"
+                            className="border p-2 rounded w-full"
+                            value={editedData[item._id]?.notes ?? item.notes ?? ""}
+                            onChange={(e) =>
+                                setEditedData((prev) => ({
+                                ...prev,
+                                [item._id]: {
+                                    ...prev[item._id],
+                                    notes: e.target.value,
+                                },
+                                }))
+                            }
+                            />
+                    </td> 
+
+
+
+                    <td>
+                        <input
+                            type="date"
+                            value={
+                            item.followUpDate
+                                ? item.followUpDate.split("T")[0]
+                                : ""
+                            }
+                            onChange={(e) =>
+                            setEditedData({
+                                ...editedData,
+                                [item._id]: {
+                                ...editedData[item._id],
+                                followUpDate: e.target.value,
+                                },
+                            })
+                            }
+                            className="border p-2 rounded"
+                        />
+                        </td> 
+
+                    <td>
+                        <button
+                        onClick={() =>
+                            saveLeadDetails(
+                            item._id,
+                            item.status,
+                            editedData[item._id]?.notes || item.notes,
+                            editedData[item._id]?.followUpDate || item.followUpDate
+                            )
+                        }
+                        className="bg-blue-600 text-white px-4 py-2 rounded"
+                        >
+                        Save
+                        </button>
+                        </td>   
 
                     <td className="p-4 text-center">
 
