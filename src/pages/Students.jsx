@@ -5,8 +5,9 @@ export default function Student() {
   const [students, setStudents] = useState([]);
 
   const [formData, setFormData] = useState({
-    name: "",
-    studentClass: "",
+    studentName: "",
+    className: "",
+    fatherName: ""
     phone: "",
     monthlyFee: "",
     paidFee: "",

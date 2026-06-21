@@ -310,7 +310,7 @@ export default function SmartWayAcademyWebsite() {
     />
     <Route
       path="/students"
-      element={<Students />}
+      element={<Student />}
       />
 
 </Routes>
