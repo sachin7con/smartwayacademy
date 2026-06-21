@@ -5,7 +5,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import Admin from "./pages/Admin";
-import Student from "./pages/Students";
+import Student from "./pages/Student";
 
 import Login from "./pages/Login";
 import {motion } from "framer-motion";

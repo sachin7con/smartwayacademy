@@ -7,7 +7,7 @@ export default function Student() {
   const [formData, setFormData] = useState({
     studentName: "",
     className: "",
-    fatherName: ""
+    fatherName: "",
     phone: "",
     monthlyFee: "",
     paidFee: "",
@@ -30,7 +30,7 @@ export default function Student() {
     fetchStudents();
   }, []);
 
-  // Input Change
+  // Handle Input Change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -51,14 +51,16 @@ export default function Student() {
       alert("Student Added Successfully");
 
       setFormData({
-        name: "",
-        studentClass: "",
+        studentName: "",
+        className: "",
+        fatherName: "",
         phone: "",
         monthlyFee: "",
         paidFee: "",
       });
 
       fetchStudents();
+
     } catch (error) {
       console.log(error);
     }
@@ -74,6 +76,7 @@ export default function Student() {
       alert("Student Deleted");
 
       fetchStudents();
+
     } catch (error) {
       console.log(error);
     }
@@ -83,26 +86,28 @@ export default function Student() {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
 
-        {/* Heading */}
         <h1 className="text-4xl font-bold text-blue-700 mb-8">
           Student Management
         </h1>
 
         {/* Add Student Form */}
+
         <div className="bg-white p-6 rounded-2xl shadow mb-10">
+
           <h2 className="text-2xl font-bold mb-4">
             Add New Student
           </h2>
 
           <form
             onSubmit={handleSubmit}
-            className="grid md:grid-cols-5 gap-4"
+            className="grid md:grid-cols-3 gap-4"
           >
+
             <input
               type="text"
-              name="name"
+              name="studentName"
               placeholder="Student Name"
-              value={formData.name}
+              value={formData.studentName}
               onChange={handleChange}
               className="border p-3 rounded-lg"
               required
@@ -110,18 +115,27 @@ export default function Student() {
 
             <input
               type="text"
-              name="studentClass"
+              name="className"
               placeholder="Class"
-              value={formData.studentClass}
+              value={formData.className}
               onChange={handleChange}
               className="border p-3 rounded-lg"
               required
+            />
+
+            <input
+              type="text"
+              name="fatherName"
+              placeholder="Father Name"
+              value={formData.fatherName}
+              onChange={handleChange}
+              className="border p-3 rounded-lg"
             />
 
             <input
               type="text"
               name="phone"
-              placeholder="Phone"
+              placeholder="Phone Number"
               value={formData.phone}
               onChange={handleChange}
               className="border p-3 rounded-lg"
@@ -153,10 +167,13 @@ export default function Student() {
             >
               Add Student
             </button>
+
           </form>
+
         </div>
 
-        {/* Students Table */}
+        {/* Student Table */}
+
         <div className="bg-white rounded-2xl shadow overflow-hidden">
 
           <table className="w-full">
@@ -164,7 +181,8 @@ export default function Student() {
             <thead className="bg-blue-600 text-white">
 
               <tr>
-                <th className="p-4 text-left">Name</th>
+                <th className="p-4 text-left">Student</th>
+                <th className="p-4 text-left">Father</th>
                 <th className="p-4 text-left">Class</th>
                 <th className="p-4 text-left">Phone</th>
                 <th className="p-4 text-left">Monthly Fee</th>
@@ -188,13 +206,22 @@ export default function Student() {
                     key={student._id}
                     className="border-b hover:bg-gray-50"
                   >
-                    <td className="p-4">{student.name}</td>
 
                     <td className="p-4">
-                      {student.studentClass}
+                      {student.studentName}
                     </td>
 
-                    <td className="p-4">{student.phone}</td>
+                    <td className="p-4">
+                      {student.fatherName}
+                    </td>
+
+                    <td className="p-4">
+                      {student.className}
+                    </td>
+
+                    <td className="p-4">
+                      {student.phone}
+                    </td>
 
                     <td className="p-4">
                       ₹{student.monthlyFee}
@@ -220,6 +247,7 @@ export default function Student() {
                       </button>
 
                     </td>
+
                   </tr>
                 );
               })}
@@ -229,6 +257,7 @@ export default function Student() {
           </table>
 
         </div>
+
       </div>
     </div>
   );
