@@ -312,107 +312,88 @@ const generateReceipt = (student) => {
             </thead>
 
             <tbody>
+  {students.map((student) => {
+    const pendingFee =
+      Number(student.monthlyFee) -
+      Number(student.paidFee);
 
-              {students.map((student) => {
+    return (
+      <tr
+        key={student._id}
+        className="border-b hover:bg-gray-50"
+      >
+        <td className="p-4">
+          {student.studentName}
+        </td>
 
-                const pendingFee =
-                  Number(student.monthlyFee) -
-                  Number(student.paidFee);
+        <td className="p-4">
+          {student.fatherName}
+        </td>
 
-                return (
-                  <tr
-                    key={student._id}
-                    className="border-b hover:bg-gray-50"
-                  >
+        <td className="p-4">
+          {student.className}
+        </td>
 
-                    <td className="p-4">
-                      {student.studentName}
-                    </td>
+        <td className="p-4">
+          {student.phone}
+        </td>
 
-                    <td className="p-4">
-                      {student.fatherName}
-                    </td>
+        <td className="p-4">
+          ₹{student.monthlyFee}
+        </td>
 
-                    <td className="p-4">
-                      {student.className}
-                    </td>
+        <td className="p-4 text-green-600 font-bold">
+          ₹{student.paidFee}
+        </td>
 
-                    <td className="p-4">
-                      {student.phone}
-                    </td>
+        <td className="p-4 text-red-600 font-bold">
+          ₹{pendingFee}
+        </td>
 
-                    <td className="p-4">
-                      ₹{student.monthlyFee}
-                    </td>
+        {/* Reminder */}
+        <td className="p-4 text-center">
+          <a
+            href={`https://wa.me/91${student.phone}?text=Dear Parent, Fee Pending for ${student.studentName}. Kindly pay soon.`}
+            target="_blank"
+            rel="noreferrer"
+            className="bg-green-500 text-white px-4 py-2 rounded-lg"
+          >
+            Reminder
+          </a>
+        </td>
 
-                    <td className="p-4 text-green-600 font-bold">
-                      ₹{student.paidFee}
-                    </td>
+        {/* Receipt */}
+        <td className="p-4 text-center">
+          <button
+            onClick={() => generateReceipt(student)}
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg"
+          >
+            Receipt
+          </button>
+        </td>
 
-                    <td className="p-4 text-red-600 font-bold">
-                      ₹{pendingFee}
-                    </td>
+        {/* Actions */}
+        <td className="p-4">
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={() => payFee(student._id)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg"
+            >
+              Pay Fee
+            </button>
 
-                    <td className="p-4 text-center">
-
-                      <button
-                        onClick={() => payFee(student._id)}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg mr-2"
-                      >
-                        Pay Fee
-                      </button>
-
-                      <td className="p-4 text-center">
-
-                      <a
-                        href={`https://wa.me/91${student.phone}?text=Dear Parent, Fee Pending for ${student.studentName}. Kindly pay soon.`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg"
-                      >
-                        Reminder
-                      </a>
-
-                    </td>
-
-                    <td className="p-4 text-center">
-
-                    <button
-                      onClick={() =>
-                        generateReceipt(student)
-                      }
-                      className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-                    >
-                      Receipt
-                    </button>
-
-                  </td>
-
-                      <button
-                        onClick={() => deleteStudent(student._id)}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                      >
-                        Delete
-                      </button>
-
-                    </td>
-
-                    <td>
-
-                    <button
-                      onClick={() => payFee(student._id)}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg"
-                    >
-                      Pay Fee
-                    </button>
-
-                    </td>
-
-                  </tr>
-                );
-              })}
-
-            </tbody>
+            <button
+              onClick={() => deleteStudent(student._id)}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
 
           </table>
 
