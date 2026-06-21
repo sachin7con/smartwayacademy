@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import jsPDF from "jspdf";
 
 export default function Student() {
   const [students, setStudents] = useState([]);
@@ -12,6 +13,19 @@ export default function Student() {
     monthlyFee: "",
     paidFee: "",
   });
+
+  const totalCollection = students.reduce(
+  (sum, s) => sum + Number(s.paidFee || 0),
+  0
+);
+
+const totalPending = students.reduce(
+  (sum, s) =>
+    sum +
+    (Number(s.monthlyFee || 0) -
+      Number(s.paidFee || 0)),
+  0
+);
 
   // Fetch Students
   const fetchStudents = async () => {
@@ -82,6 +96,77 @@ export default function Student() {
     }
   };
 
+  const payFee = async (id) => {
+  const amount = prompt("Enter fee amount");
+
+  if (!amount) return;
+
+  try {
+    await axios.put(
+      `https://smartwayacademy.onrender.com/api/students/pay/${id}`,
+      {
+        amount: Number(amount),
+      }
+    );
+
+    alert("Fee Updated Successfully");
+
+    fetchStudents();
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const generateReceipt = (student) => {
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+
+  doc.text(
+    "SmartWay Academy Fee Receipt",
+    20,
+    20
+  );
+
+  doc.setFontSize(12);
+
+  doc.text(
+    `Student: ${student.studentName}`,
+    20,
+    40
+  );
+
+  doc.text(
+    `Class: ${student.className}`,
+    20,
+    50
+  );
+
+  doc.text(
+    `Phone: ${student.phone}`,
+    20,
+    60
+  );
+
+  doc.text(
+    `Paid Fee: ₹${student.paidFee}`,
+    20,
+    70
+  );
+
+  doc.text(
+    `Date: ${new Date().toLocaleDateString()}`,
+    20,
+    80
+  );
+
+  doc.save(
+    `${student.studentName}-receipt.pdf`
+  );
+};
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
@@ -89,6 +174,31 @@ export default function Student() {
         <h1 className="text-4xl font-bold text-blue-700 mb-8">
           Student Management
         </h1>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+
+        <div className="bg-blue-600 text-white p-5 rounded-xl">
+          <h3>Total Students</h3>
+          <p className="text-3xl font-bold">
+            {students.length}
+          </p>
+        </div>
+
+        <div className="bg-green-600 text-white p-5 rounded-xl">
+          <h3>Total Collection</h3>
+          <p className="text-3xl font-bold">
+            ₹{totalCollection}
+          </p>
+        </div>
+
+        <div className="bg-red-600 text-white p-5 rounded-xl">
+          <h3>Pending Fee</h3>
+          <p className="text-3xl font-bold">
+            ₹{totalPending}
+          </p>
+        </div>
+
+      </div>
 
         {/* Add Student Form */}
 
@@ -188,7 +298,15 @@ export default function Student() {
                 <th className="p-4 text-left">Monthly Fee</th>
                 <th className="p-4 text-left">Paid</th>
                 <th className="p-4 text-left">Pending</th>
-                <th className="p-4 text-center">Action</th>
+                <th className="p-4 text-center">
+                  Reminder
+                </th>
+                <th className="p-4 text-center">
+                  Receipt
+                </th>
+                <th className="p-4 text-center">
+                  Action
+                </th>
               </tr>
 
             </thead>
@@ -238,13 +356,55 @@ export default function Student() {
                     <td className="p-4 text-center">
 
                       <button
-                        onClick={() =>
-                          deleteStudent(student._id)
-                        }
+                        onClick={() => payFee(student._id)}
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg mr-2"
+                      >
+                        Pay Fee
+                      </button>
+
+                      <td className="p-4 text-center">
+
+                      <a
+                        href={`https://wa.me/91${student.phone}?text=Dear Parent, Fee Pending for ${student.studentName}. Kindly pay soon.`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg"
+                      >
+                        Reminder
+                      </a>
+
+                    </td>
+
+                    <td className="p-4 text-center">
+
+                    <button
+                      onClick={() =>
+                        generateReceipt(student)
+                      }
+                      className="bg-purple-600 text-white px-4 py-2 rounded-lg"
+                    >
+                      Receipt
+                    </button>
+
+                  </td>
+
+                      <button
+                        onClick={() => deleteStudent(student._id)}
                         className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                       >
                         Delete
                       </button>
+
+                    </td>
+
+                    <td>
+
+                    <button
+                      onClick={() => payFee(student._id)}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg"
+                    >
+                      Pay Fee
+                    </button>
 
                     </td>
 

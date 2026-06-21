@@ -44,5 +44,49 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id/pay", async (req, res) => {
+  try {
+
+    const { amount } = req.body;
+
+    const student = await Student.findById(req.params.id);
+
+    student.paidFee += Number(amount);
+
+    student.feeHistory.push({
+      amount,
+    });
+
+    await student.save();
+
+    res.json(student);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+router.put("/pay/:id", async (req, res) => {
+  try {
+
+    const student = await Student.findById(req.params.id);
+
+    student.paidFee =
+      Number(student.paidFee) +
+      Number(req.body.amount);
+
+    await student.save();
+
+    res.json(student);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 
 module.exports = router;

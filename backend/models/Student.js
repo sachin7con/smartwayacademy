@@ -35,6 +35,15 @@ const studentSchema = mongoose.Schema(
       default: 0,
     },
 
+    feeHistory: {
+        amount: Number,
+        date: {
+            type: Date,
+            default: Date.now,
+        }
+
+    },
+
     admissionDate: {
       type: Date,
       default: Date.now,
