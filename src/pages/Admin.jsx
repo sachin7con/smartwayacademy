@@ -34,7 +34,7 @@ export default function Admin() {
   };
 
   //UPDATE NOTES
-  const updatedNotes = async(id, notes) => {
+  const updateNotes = async(id, notes) => {
     try{
         await axios.put(`https://smartwayacademy.onrender.com/api/inquiries/${id}`, {notes})
         
@@ -48,8 +48,15 @@ export default function Admin() {
   //SAVE Lead Details
   const saveLeadDetails = async(id, status, notes, followUpDate ) =>{
     try {
+
+         console.log({
+            id,
+            status,
+            notes,
+            followUpDate
+        });
         await axios.put(`https://smartwayacademy.onrender.com/api/inquiries/${id}`,
-            {status, notes, followUpDate,}
+            {status, notes, followUpDate}
         )
         alert("Lead updated");
         fetchInquiries();
@@ -256,11 +263,17 @@ const exportToExcel = () => {
 
                     <td>
                     <select
-                        value={item.status}
-                        onChange={(e) =>
-                        updateStatus(item._id, e.target.value)
-                        }
-                        className="border p-2 rounded"
+                    value={editedData[item._id]?.status || item.status}
+                    onChange={(e) =>
+                        setEditedData({
+                        ...editedData,
+                        [item._id]: {
+                            ...editedData[item._id],
+                            status: e.target.value,
+                        },
+                        })
+                    }
+                    className="border p-2 rounded"
                     >
                     <option value="New">New</option>
                     <option value="Contacted">Contacted</option>
@@ -302,9 +315,11 @@ const exportToExcel = () => {
                         <input
                             type="date"
                             value={
-                            item.followUpDate
-                                ? item.followUpDate.split("T")[0]
-                                : ""
+                            editedData[item._id]?.followUpDate
+                            ? editedData[item._id].followUpDate
+                            : item.followUpDate
+                            ? item.followUpDate.split("T")[0]
+                            : ""
                             }
                             onChange={(e) =>
                             setEditedData({
@@ -324,9 +339,9 @@ const exportToExcel = () => {
                         onClick={() =>
                             saveLeadDetails(
                             item._id,
-                            item.status,
-                            editedData[item._id]?.notes || item.notes,
-                            editedData[item._id]?.followUpDate || item.followUpDate
+                            editedData[item._id]?.status ?? item.status,
+                            editedData[item._id]?.notes ?? item.notes,
+                            editedData[item._id]?.followUpDate ?? item.followUpDate
                             )
                         }
                         className="bg-blue-600 text-white px-4 py-2 rounded"

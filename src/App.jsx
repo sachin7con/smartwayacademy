@@ -5,6 +5,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import Admin from "./pages/Admin";
+import Student from "./pages/Students";
 
 import Login from "./pages/Login";
 import {motion } from "framer-motion";
@@ -225,7 +226,7 @@ export default function SmartWayAcademyWebsite() {
             </p>
             <p className="text-gray-300">
               Address: Smart Way Academy <br/>
-              Street no. 6, (Near N. R. Public School) <br/>
+              Street no. 6, (Near N. R. Publi c School) <br/>
               Raj Nagar 2, New Delhi-110077
             </p>
           </div>
@@ -307,6 +308,10 @@ export default function SmartWayAcademyWebsite() {
               </ProtectedRoute>
       }
     />
+    <Route
+      path="/students"
+      element={<Students />}
+      />
 
 </Routes>
   );

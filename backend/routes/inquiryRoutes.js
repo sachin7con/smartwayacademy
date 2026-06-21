@@ -28,30 +28,30 @@
     })
 
     //Update
-    router.put("/:id", async (req, res) =>{
-    try{
+    router.put("/:id", async (req, res) => {
+  try {
 
-        console.log("ID:", req.params.id);
-        console.log("STATUS:", req.body.status);
+    const inquiry = await Inquiry.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: req.body.status,
+        notes: req.body.notes,
+        followUpDate: req.body.followUpDate,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-        const inquiry = await Inquiry.findByIdAndUpdate(
-            req.params.id,
-            { status: req.body.status,
-                notes: req.body.notes,
-                followUpDate: req.body.followUpDate,
+    res.json(inquiry);
 
-             },
-            { new: true }
-        );
-
-        console.log("UPDATED:", inquiry);
-
-        res.json(inquiry);
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json(error);
-    } });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 
     //delete inquiry route
     router.delete("/:id",async (req, res) =>{
