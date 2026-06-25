@@ -5,8 +5,8 @@ A secure, production-grade institutional automation engine engineered to elimina
 This platform bridges the gap between educational administration and modern cloud architectures by digitizing transactional billing, student ledgers, and automated external notifications.
 
 ## 🚀 Live Production Links
-* **Live Web Application:** [👉 Click Here to View Live Demo](https://smartwayacademy.vercel.app/) ]
-* **Backend API Base Engine:** `https://your-render-or-railway-backend-link.com`
+* **Live Web Application:** [👉 Click Here to View Live Demo](https://smartwayacademy.vercel.app/)
+* **Backend API Base Engine:** [https://your-render-or-railway-backend-link.com](https://smartwayacademy.onrender.com/api)
 
 ---
 
