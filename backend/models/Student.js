@@ -23,25 +23,13 @@ const studentSchema = mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
 
     monthlyFee: {
       type: Number,
       required: true,
-    },
-
-    paidFee: {
-      type: Number,
-      default: 0,
-    },
-
-    feeHistory: {
-        amount: Number,
-        date: {
-            type: Date,
-            default: Date.now,
-        }
-
+      min: 0,
     },
 
     admissionDate: {
@@ -58,7 +46,7 @@ const studentSchema = mongoose.Schema(
     remarks: {
       type: String,
       default: "",
-    }
+    },
   },
   {
     timestamps: true,

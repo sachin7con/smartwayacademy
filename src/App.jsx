@@ -6,6 +6,7 @@ import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import Admin from "./pages/Admin";
 import Student from "./pages/Student";
+import Fees from "./pages/Fees";
 
 import Login from "./pages/Login";
 import {motion } from "framer-motion";
@@ -308,6 +309,14 @@ export default function SmartWayAcademyWebsite() {
               </ProtectedRoute>
       }
     />
+     <Route
+   path="/admin/fees"
+    element={
+    <ProtectedRoute>
+      <Fees />
+    </ProtectedRoute>
+  }
+      />
     <Route
       path="/students"
       element={<Student />}

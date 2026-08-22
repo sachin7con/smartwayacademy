@@ -2,8 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const inquiryRoutes = require("./routes/inquiryRoutes");
 const studentRoutes = require("./routes/studentRoutes");
+const feeRoutes = require("./routes/feeRoutes");
 const cors = require("cors");
 const adminRoutes = require("./routes/adminRoutes")
+
 
 require("dotenv").config();
 
@@ -25,6 +27,7 @@ const PORT = process.env.PORT || 5000;
 app.use("/api/inquiries", inquiryRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/fees", feeRoutes);
 
 
 app.listen(PORT, ()=>{
