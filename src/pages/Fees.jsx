@@ -197,6 +197,8 @@ export default function Fees() {
                     Status
                   </th>
 
+                  <th className="p-4 text-center">Action</th>
+
                 </tr>
 
               </thead>
