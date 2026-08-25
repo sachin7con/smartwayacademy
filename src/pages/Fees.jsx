@@ -5,6 +5,15 @@ export default function Fees() {
   const [fees, setFees] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [selectedFee, setSelectedFee] = useState(null);
+
+  const [paymentAmount, setPaymentAmount] = useState("");
+  const [paymentMode, setPaymentMode] = useState("UPI");
+  const [paymentNote, setPaymentNote] = useState("");
+
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
   const [month, setMonth] = useState(8);
   const [year, setYear] = useState(2026);
 
@@ -28,6 +37,75 @@ export default function Fees() {
   useEffect(() => {
     fetchFees();
   }, [month, year]);
+
+  const openPaymentForm = (fee) =>{
+    const paid = (fee.payments || [] ).reduce(
+      (sum, payment) => sum + Number(payment.amount || 0),
+      0
+    );
+
+    const pending = Number(fee.amountDue || 0) - paid;
+    
+    setSelectedFee({
+      ...fee,
+      pending,
+    });
+
+    setPaymentAmount("");
+    setPaymentMode("UPI");
+    setPaymentNote("");
+    setShowPaymentForm(true);
+
+  };
+  
+  const handlePayment = async(e) =>{
+    e.preventDefault();
+
+    const amount = Number(paymentAmount);
+
+    if(!amount || amount<=0){
+      alert("Please enter a valid payment amount");
+      return;
+    }
+
+    if(amount > selectedFee.pending ){
+      alert(`Maximum payment allowed is ${selectedFee.pending}`);
+    }
+
+    try{
+      setPaymentLoading(true);
+
+      const response = await axios.put(
+        `https://smartwayacademy.onrender.com/api/fees/pay/${selectedFee._id}`,
+        {
+          amount,
+          paymentMode,
+          note: paymentNote,
+        }
+      );
+
+      if(response.data.success){
+        alert("payment recorded successfully");
+
+        setShowPaymentForm(false);
+        setSelectedFee(null);
+
+        await fetchFees();
+      }
+
+
+    }catch(error) {
+      console.error("Payment  error: ", error);
+
+      alert(
+        error.response?.data?.message || "Failed to record payment"
+      );
+    } finally {
+      setPaymentLoading(false);
+    }
+
+  };
+
 
   // Calculate totals
   const totalStudents = fees.length;
@@ -266,6 +344,21 @@ export default function Fees() {
 
                       </td>
 
+                      <td className="p-4 text-center">
+                    {fee.status !== "Paid" ? (
+                      <button
+                        onClick={() => openPaymentForm(fee)}
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                      >
+                        Pay Fee
+                      </button>
+                    ) : (
+                      <span className="text-green-600 font-semibold">
+                        Paid
+                      </span>
+                    )}
+                  </td>
+
                     </tr>
                   );
 
@@ -276,6 +369,111 @@ export default function Fees() {
             </table>
 
           </div>
+
+          {/* Payment Form */}
+{showPaymentForm && selectedFee && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+
+      <h2 className="text-2xl font-bold text-blue-700 mb-4">
+        Pay Fee
+      </h2>
+
+      <div className="bg-gray-100 rounded-lg p-4 mb-5">
+
+        <p>
+          <strong>Student:</strong>{" "}
+          {selectedFee.student?.studentName}
+        </p>
+
+        <p>
+          <strong>Fee Due:</strong>{" "}
+          ₹{selectedFee.amountDue}
+        </p>
+
+        <p>
+          <strong>Pending:</strong>{" "}
+          ₹{selectedFee.pending}
+        </p>
+
+      </div>
+
+      <form onSubmit={handlePayment}>
+
+        <label className="block mb-2 font-semibold">
+          Payment Amount
+        </label>
+
+        <input
+          type="number"
+          min="1"
+          max={selectedFee.pending}
+          value={paymentAmount}
+          onChange={(e) => setPaymentAmount(e.target.value)}
+          className="w-full border p-3 rounded-lg mb-4"
+          placeholder="Enter amount"
+          required
+        />
+
+        <label className="block mb-2 font-semibold">
+          Payment Mode
+        </label>
+
+        <select
+          value={paymentMode}
+          onChange={(e) => setPaymentMode(e.target.value)}
+          className="w-full border p-3 rounded-lg mb-4"
+        >
+          <option value="UPI">UPI</option>
+          <option value="Cash">Cash</option>
+          <option value="Bank Transfer">
+            Bank Transfer
+          </option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label className="block mb-2 font-semibold">
+          Note
+        </label>
+
+        <textarea
+          value={paymentNote}
+          onChange={(e) => setPaymentNote(e.target.value)}
+          className="w-full border p-3 rounded-lg mb-5"
+          placeholder="Optional note"
+          rows="3"
+        />
+
+        <div className="flex gap-3">
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowPaymentForm(false);
+              setSelectedFee(null);
+            }}
+            className="flex-1 bg-gray-300 text-gray-800 py-3 rounded-lg"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={paymentLoading}
+            className="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 disabled:opacity-50"
+          >
+            {paymentLoading ? "Saving..." : "Pay Fee"}
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+)}
 
           {/* No Records */}
           {!loading && fees.length === 0 && (
