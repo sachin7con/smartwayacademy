@@ -8,6 +8,9 @@ export default function Fees() {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [selectedFee, setSelectedFee] = useState(null);
 
+  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  const [historyFee, setHistoryFee] = useState(null);
+
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMode, setPaymentMode] = useState("UPI");
   const [paymentNote, setPaymentNote] = useState("");
@@ -44,6 +47,7 @@ export default function Fees() {
       0
     );
 
+    
     const pending = Number(fee.amountDue || 0) - paid;
     
     setSelectedFee({
@@ -57,6 +61,11 @@ export default function Fees() {
     setShowPaymentForm(true);
 
   };
+
+  const openPaymentHistory = (fee) =>{
+      setHistoryFee(fee);
+      setShowPaymentHistory(true);
+    }
   
   const handlePayment = async(e) =>{
     e.preventDefault();
@@ -70,6 +79,7 @@ export default function Fees() {
 
     if(amount > selectedFee.pending ){
       alert(`Maximum payment allowed is ${selectedFee.pending}`);
+     return;
     }
 
     try{
@@ -357,6 +367,14 @@ export default function Fees() {
                         Paid
                       </span>
                     )}
+                     
+                     {(fee.payments || []).length >0 && (
+                      <button onClick={() => openPaymentHistory(fee)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                      >History</button>
+                     )}
+
+
                   </td>
 
                     </tr>
@@ -469,6 +487,171 @@ export default function Fees() {
         </div>
 
       </form>
+
+    </div>
+
+  </div>
+)}
+
+{/* Payment History Modal */}
+{showPaymentHistory && historyFee && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
+
+      {/* Header */}
+      <div className="flex justify-between items-center mb-5">
+
+        <div>
+          <h2 className="text-2xl font-bold text-blue-700">
+            Payment History
+          </h2>
+
+          <p className="text-gray-600 mt-1">
+            {historyFee.student?.studentName} —{" "}
+            {historyFee.month}/{historyFee.year}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setShowPaymentHistory(false);
+            setHistoryFee(null);
+          }}
+          className="text-gray-500 hover:text-gray-800 text-2xl font-bold"
+        >
+          ×
+        </button>
+
+      </div>
+
+      {/* Summary */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+
+        <div className="bg-gray-100 rounded-lg p-4">
+          <p className="text-sm text-gray-500">
+            Fee Due
+          </p>
+          <p className="text-xl font-bold">
+            ₹{historyFee.amountDue}
+          </p>
+        </div>
+
+        <div className="bg-green-100 rounded-lg p-4">
+          <p className="text-sm text-gray-500">
+            Total Paid
+          </p>
+
+          <p className="text-xl font-bold text-green-700">
+            ₹
+            {(historyFee.payments || []).reduce(
+              (sum, payment) =>
+                sum + Number(payment.amount || 0),
+              0
+            )}
+          </p>
+        </div>
+
+        <div className="bg-red-100 rounded-lg p-4">
+          <p className="text-sm text-gray-500">
+            Pending
+          </p>
+
+          <p className="text-xl font-bold text-red-700">
+            ₹
+            {Number(historyFee.amountDue || 0) -
+              (historyFee.payments || []).reduce(
+                (sum, payment) =>
+                  sum + Number(payment.amount || 0),
+                0
+              )}
+          </p>
+        </div>
+
+      </div>
+
+      {/* Payment List */}
+      <div className="border rounded-xl overflow-hidden">
+
+        <table className="w-full">
+
+          <thead className="bg-blue-600 text-white">
+
+            <tr>
+              <th className="p-3 text-left">
+                Date
+              </th>
+
+              <th className="p-3 text-left">
+                Amount
+              </th>
+
+              <th className="p-3 text-left">
+                Mode
+              </th>
+
+              <th className="p-3 text-left">
+                Note
+              </th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {(historyFee.payments || []).map(
+              (payment) => (
+
+                <tr
+                  key={payment._id}
+                  className="border-b"
+                >
+
+                  <td className="p-3">
+                    {new Date(
+                      payment.paymentDate
+                    ).toLocaleDateString("en-IN")}
+                  </td>
+
+                  <td className="p-3 font-bold text-green-600">
+                    ₹{payment.amount}
+                  </td>
+
+                  <td className="p-3">
+                    {payment.paymentMode}
+                  </td>
+
+                  <td className="p-3">
+                    {payment.note || "-"}
+                  </td>
+
+                </tr>
+
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      {/* Close */}
+      <div className="flex justify-end mt-5">
+
+        <button
+          type="button"
+          onClick={() => {
+            setShowPaymentHistory(false);
+            setHistoryFee(null);
+          }}
+          className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
+        >
+          Close
+        </button>
+
+      </div>
 
     </div>
 
