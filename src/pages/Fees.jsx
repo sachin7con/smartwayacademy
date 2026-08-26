@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import jsPDF from "jspdf";
 
 export default function Fees() {
   const [fees, setFees] = useState([]);
@@ -67,6 +68,258 @@ export default function Fees() {
       setShowPaymentHistory(true);
     }
   
+  const sendFeeReminder = (fee) => {
+    const phone = fee.student?.phone;
+
+    if(!phone){
+      alert("Student Phone number is not available");
+      return;
+    }
+
+    const paid = (fee.payments || []).reduce(
+      (sum, payment) => sum + Number(payment.amount || 0), 0
+    );
+
+    const pending = Number(fee.amountDue || 0 ) - paid;
+
+    if(pending <= 0){
+      alert("This fee is already fully paid");
+      return;
+    }
+    const studentName =
+    fee.student?.studentName || "Student";
+
+  const message = `Dear Parent,
+
+This is a reminder regarding the pending fee for ${studentName} for ${new Date(
+    2000,
+    fee.month - 1
+  ).toLocaleString("en-IN", { month: "long" })} ${fee.year}.
+
+Total Fee: ₹${fee.amountDue}
+Paid: ₹${paid}
+Pending: ₹${pending}
+
+Kindly clear the pending fee at your convenience.
+
+Thank you,
+SmartWay Academy`;
+
+  const whatsappUrl =
+    `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(whatsappUrl, "_blank");
+};
+
+const generateReceipt = (fee) => {
+  const payments = fee.payments || [];
+
+  if (payments.length === 0) {
+    alert("No payment found for this fee record");
+    return;
+  }
+
+  const totalPaid = payments.reduce(
+    (sum, payment) =>
+      sum + Number(payment.amount || 0),
+    0
+  );
+
+  const latestPayment = payments[payments.length - 1];
+
+  const pending =
+    Number(fee.amountDue || 0) - totalPaid;
+
+  const monthName = new Date(
+    2000,
+    fee.month - 1
+  ).toLocaleString("en-IN", {
+    month: "long",
+  });
+
+  const receiptNumber =
+    `SWA-${fee.year}-${String(fee.month).padStart(2, "0")}-${fee._id.slice(-6).toUpperCase()}`;
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(20);
+  doc.text("SMARTWAY ACADEMY", 105, 20, {
+    align: "center",
+  });
+
+  doc.setFontSize(14);
+  doc.text("FEE PAYMENT RECEIPT", 105, 30, {
+    align: "center",
+  });
+
+  doc.setFontSize(11);
+
+  doc.text(
+    `Receipt No: ${receiptNumber}`,
+    20,
+    45
+  );
+
+  doc.text(
+    `Payment Date: ${new Date(
+      latestPayment.paymentDate
+    ).toLocaleDateString("en-IN")}`,
+    20,
+    53
+  );
+
+  doc.line(20, 58, 190, 58);
+
+  doc.setFontSize(12);
+
+  doc.text(
+    `Student Name: ${fee.student?.studentName || "-"}`,
+    20,
+    70
+  );
+
+  doc.text(
+    `Father Name: ${fee.student?.fatherName || "-"}`,
+    20,
+    80
+  );
+
+  doc.text(
+    `Class: ${fee.student?.className || "-"}`,
+    20,
+    90
+  );
+
+  doc.text(
+    `Phone: ${fee.student?.phone || "-"}`,
+    20,
+    100
+  );
+
+  doc.text(
+    `Fee Month: ${monthName} ${fee.year}`,
+    20,
+    110
+  );
+
+  doc.line(20, 116, 190, 116);
+
+  doc.text(
+    `Total Fee Due: Rs. ${fee.amountDue}`,
+    20,
+    130
+  );
+
+  doc.text(
+    `Total Paid: Rs. ${totalPaid}`,
+    20,
+    140
+  );
+
+  doc.text(
+    `Pending Balance: Rs. ${pending}`,
+    20,
+    150
+  );
+
+  doc.text(
+    `Latest Payment: Rs. ${latestPayment.amount}`,
+    20,
+    165
+  );
+
+  doc.text(
+    `Payment Mode: ${latestPayment.paymentMode || "-"}`,
+    20,
+    175
+  );
+
+  if (latestPayment.note) {
+    doc.text(
+      `Note: ${latestPayment.note}`,
+      20,
+      185
+    );
+  }
+
+  doc.line(20, 195, 190, 195);
+
+  doc.setFontSize(11);
+
+  doc.text(
+    "Thank you for your payment.",
+    105,
+    208,
+    { align: "center" }
+  );
+
+  doc.text(
+    "SmartWay Academy",
+    105,
+    218,
+    { align: "center" }
+  );
+
+  doc.save(
+    `${fee.student?.studentName || "student"}-${monthName}-${fee.year}-receipt.pdf`
+  );
+};
+
+const sendPaymentReceiptWhatsApp = (fee) => {
+  const payments = fee.payments || [];
+
+  if (payments.length === 0) {
+    alert("No payment found for this fee record");
+    return;
+  }
+
+  const totalPaid = payments.reduce(
+    (sum, payment) =>
+      sum + Number(payment.amount || 0),
+    0
+  );
+
+  const latestPayment = payments[payments.length - 1];
+
+  const pending =
+    Number(fee.amountDue || 0) - totalPaid;
+
+  const monthName = new Date(
+    2000,
+    fee.month - 1
+  ).toLocaleString("en-IN", {
+    month: "long",
+  });
+
+  const phone = fee.student?.phone;
+
+  if (!phone) {
+    alert("Student phone number is not available");
+    return;
+  }
+
+  const studentName =
+    fee.student?.studentName || "Student";
+
+  const message = `Dear Parent,
+
+Payment received for ${studentName} for ${monthName} ${fee.year}.
+
+Amount Paid: ₹${latestPayment.amount}
+Total Paid: ₹${totalPaid}
+Pending: ₹${pending}
+Payment Mode: ${latestPayment.paymentMode || "-"}
+
+Thank you,
+SmartWay Academy`;
+
+  const whatsappUrl =
+    `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(whatsappUrl, "_blank");
+};
+
+
   const handlePayment = async(e) =>{
     e.preventDefault();
 
@@ -373,7 +626,33 @@ export default function Fees() {
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                       >History</button>
                      )}
+                     { pending >0 && (
+                      <button
+                        onClick = {() => sendFeeReminder(fee)}
+                        className = "bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                      >
+                        Reminder 
+                      </button>
 
+                     )}
+
+                     {(fee.payments || []).length > 0 && (
+                        <button
+                          onClick={() => generateReceipt(fee)}
+                          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+                        >
+                          Receipt
+                        </button>
+                      )}
+
+                      {(fee.payments || []).length > 0 && (
+                      <button
+                        onClick={() => sendPaymentReceiptWhatsApp(fee)}
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                      >
+                        WhatsApp
+                      </button>
+                    )}
 
                   </td>
 
