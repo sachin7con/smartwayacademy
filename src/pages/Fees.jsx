@@ -20,6 +20,9 @@ export default function Fees() {
 
   const [month, setMonth] = useState(8);
   const [year, setYear] = useState(2026);
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const fetchFees = async () => {
     try {
@@ -390,6 +393,30 @@ SmartWay Academy`;
   );
 
   const totalPending = totalDue - totalCollected;
+  const filteredFees = fees.filter((fee) => {
+  const search = searchTerm.toLowerCase().trim();
+
+  const studentName =
+    fee.student?.studentName?.toLowerCase() || "";
+
+  const fatherName =
+    fee.student?.fatherName?.toLowerCase() || "";
+
+  const phone =
+    fee.student?.phone?.toLowerCase() || "";
+
+  const matchesSearch =
+    !search ||
+    studentName.includes(search) ||
+    fatherName.includes(search) ||
+    phone.includes(search);
+
+  const matchesStatus =
+    statusFilter === "All" ||
+    fee.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+});
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -495,6 +522,78 @@ SmartWay Academy`;
           </div>
         )}
 
+        {/* Fee Status Summary */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-blue-500">
+    <p className="text-sm text-gray-500">
+      Total
+    </p>
+    <p className="text-2xl font-bold text-gray-800">
+      {fees.length}
+    </p>
+  </div>
+
+  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-green-500">
+    <p className="text-sm text-gray-500">
+      Paid
+    </p>
+    <p className="text-2xl font-bold text-green-600">
+      {fees.filter((fee) => fee.status === "Paid").length}
+    </p>
+  </div>
+
+  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-yellow-500">
+    <p className="text-sm text-gray-500">
+      Partial
+    </p>
+    <p className="text-2xl font-bold text-yellow-600">
+      {fees.filter((fee) => fee.status === "Partial").length}
+    </p>
+  </div>
+
+  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-red-500">
+    <p className="text-sm text-gray-500">
+      Due
+    </p>
+    <p className="text-2xl font-bold text-red-600">
+      {fees.filter((fee) => fee.status === "Due").length}
+    </p>
+  </div>
+
+</div>
+{/* Search & Filter */}
+<div className="bg-white p-4 rounded-xl shadow mb-6">
+
+  <div className="flex flex-col md:flex-row gap-4">
+
+    <input
+      type="text"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      placeholder="Search student, father name or phone..."
+      className="flex-1 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+
+    <select
+      value={statusFilter}
+      onChange={(e) => setStatusFilter(e.target.value)}
+      className="border border-gray-300 p-3 rounded-lg bg-white"
+    >
+      <option value="All">All Status</option>
+      <option value="Paid">Paid</option>
+      <option value="Partial">Partial</option>
+      <option value="Due">Due</option>
+    </select>
+
+  </div>
+
+  <p className="text-sm text-gray-500 mt-3">
+    Showing {filteredFees.length} of {fees.length} students
+  </p>
+
+</div>
+
         {/* Fee Table */}
         <div className="bg-white rounded-2xl shadow overflow-hidden">
 
@@ -546,7 +645,7 @@ SmartWay Academy`;
 
               <tbody>
 
-                {fees.map((fee) => {
+                {filteredFees.map((fee) => {
 
                   const paid = (fee.payments || []).reduce(
                     (sum, payment) =>
