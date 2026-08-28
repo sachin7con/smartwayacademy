@@ -6,6 +6,8 @@ export default function Fees() {
   const [fees, setFees] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [ generateLoading, setGenerateLoading] = useState(false);
+
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [selectedFee, setSelectedFee] = useState(null);
 
@@ -44,6 +46,53 @@ export default function Fees() {
   useEffect(() => {
     fetchFees();
   }, [month, year]);
+
+
+  const generateMonthlyFees = async () => {
+  const monthName = new Date(
+    2000,
+    month - 1
+  ).toLocaleString("en-IN", {
+    month: "long",
+  });
+
+  const confirmed = window.confirm(
+    `Generate ${monthName} ${year} fees for all active students?`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    setGenerateLoading(true);
+
+    const response = await axios.post(
+      `https://smartwayacademy.onrender.com/api/fees/generate/${year}/${month}`
+    );
+
+    if (response.data.success) {
+      alert(
+        `${monthName} ${year} fee generation complete.\n\n` +
+        `Created: ${response.data.created}\n` +
+        `Already Existing: ${response.data.existing}\n` +
+        `Total Students: ${response.data.totalStudents}`
+      );
+
+      await fetchFees();
+    }
+  } catch (error) {
+    console.error(
+      "Generate monthly fees error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to generate monthly fees"
+    );
+  } finally {
+    setGenerateLoading(false);
+  }
+};
 
   const openPaymentForm = (fee) =>{
     const paid = (fee.payments || [] ).reduce(
@@ -436,7 +485,7 @@ SmartWay Academy`;
           </div>
 
           {/* Month / Year */}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
 
             <select
               value={month}
@@ -466,6 +515,15 @@ SmartWay Academy`;
               <option value={2027}>2027</option>
               <option value={2028}>2028</option>
             </select>
+            <button
+  onClick={generateMonthlyFees}
+  disabled={generateLoading}
+  className="bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+>
+  {generateLoading
+    ? "Generating..."
+    : "Generate Fees"}
+</button>
 
           </div>
         </div>

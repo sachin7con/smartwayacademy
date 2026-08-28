@@ -1,6 +1,7 @@
 // Jay SHree Ganeshay Namah Oum Namah ShivayParivar JSLN JMD JSSR JSRK JBB JSVM JMK JMS JJj JSKS, JSRK JSVL
 const express = require("express");
 const Fee = require("../models/Fee");
+const Student = require("../models/Student");
 
 const router = express.Router();
 
@@ -118,5 +119,75 @@ router.put("/pay/:id", async (req, res) => {
     });
   }
 });
+
+router.post("/generate/:year/:month", async (req, res) => {
+  try {
+    const { year, month } = req.params;
+
+    const selectedYear = Number(year);
+    const selectedMonth = Number(month);
+
+    if (
+      !selectedYear ||
+      !selectedMonth ||
+      selectedMonth < 1 ||
+      selectedMonth > 12
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid month or year",
+      });
+    }
+
+    // Get all active students
+    const students = await Student.find({
+      status: "Active",
+    });
+
+    let created = 0;
+    let existing = 0;
+
+    for (const student of students) {
+      const existingFee = await Fee.findOne({
+        student: student._id,
+        month: selectedMonth,
+        year: selectedYear,
+      });
+
+      if (existingFee) {
+        existing++;
+        continue;
+      }
+
+      await Fee.create({
+        student: student._id,
+        month: selectedMonth,
+        year: selectedYear,
+        amountDue: Number(student.monthlyFee || 0),
+        payments: [],
+        status: "Due",
+      });
+
+      created++;
+    }
+
+    res.json({
+      success: true,
+      message: "Monthly fees generated successfully",
+      created,
+      existing,
+      totalStudents: students.length,
+    });
+  } catch (error) {
+    console.error("Generate monthly fees error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate monthly fees",
+      error: error.message,
+    });
+  }
+});
+
 
 module.exports = router;
