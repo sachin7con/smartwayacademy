@@ -120,6 +120,161 @@ router.put("/pay/:id", async (req, res) => {
   }
 });
 
+// Edit an existing payment
+router.put("/payment/:feeId/:paymentId", async (req, res) => {
+  try {
+    const { amount, paymentMode, note } = req.body;
+
+    const paymentAmount = Number(amount);
+
+    if (!paymentAmount || paymentAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment amount must be greater than 0",
+      });
+    }
+
+    const fee = await Fee.findById(req.params.feeId);
+
+    if (!fee) {
+      return res.status(404).json({
+        success: false,
+        message: "Fee record not found",
+      });
+    }
+
+    const payment = fee.payments.id(req.params.paymentId);
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment not found",
+      });
+    }
+
+    // Calculate total paid excluding the payment being edited
+    const paidWithoutCurrentPayment = fee.payments.reduce(
+      (sum, item) => {
+        if (item._id.toString() === req.params.paymentId) {
+          return sum;
+        }
+
+        return sum + Number(item.amount || 0);
+      },
+      0
+    );
+
+    // Prevent overpayment
+    if (
+      paidWithoutCurrentPayment + paymentAmount >
+      Number(fee.amountDue)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: `Payment cannot exceed pending amount of ₹${
+          Number(fee.amountDue) - paidWithoutCurrentPayment
+        }`,
+      });
+    }
+
+    // Update payment
+    payment.amount = paymentAmount;
+    payment.paymentMode = paymentMode || "UPI";
+    payment.note = note || "";
+
+    // Recalculate total paid
+    const totalPaid = fee.payments.reduce(
+      (sum, item) =>
+        sum + Number(item.amount || 0),
+      0
+    );
+
+    // Recalculate status
+    if (totalPaid === 0) {
+      fee.status = "Due";
+    } else if (totalPaid < Number(fee.amountDue)) {
+      fee.status = "Partial";
+    } else {
+      fee.status = "Paid";
+    }
+
+    await fee.save();
+
+    res.json({
+      success: true,
+      message: "Payment updated successfully",
+      fee,
+    });
+  } catch (error) {
+    console.error("Edit payment error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update payment",
+      error: error.message,
+    });
+  }
+});
+
+
+// Delete an existing payment
+router.delete("/payment/:feeId/:paymentId", async (req, res) => {
+  try {
+    const fee = await Fee.findById(req.params.feeId);
+
+    if (!fee) {
+      return res.status(404).json({
+        success: false,
+        message: "Fee record not found",
+      });
+    }
+
+    const payment = fee.payments.id(req.params.paymentId);
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment not found",
+      });
+    }
+
+    // Remove payment
+    payment.deleteOne();
+
+    // Recalculate total paid
+    const totalPaid = fee.payments.reduce(
+      (sum, item) =>
+        sum + Number(item.amount || 0),
+      0
+    );
+
+    // Recalculate status
+    if (totalPaid === 0) {
+      fee.status = "Due";
+    } else if (totalPaid < Number(fee.amountDue)) {
+      fee.status = "Partial";
+    } else {
+      fee.status = "Paid";
+    }
+
+    await fee.save();
+
+    res.json({
+      success: true,
+      message: "Payment deleted successfully",
+      fee,
+    });
+  } catch (error) {
+    console.error("Delete payment error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete payment",
+      error: error.message,
+    });
+  }
+});
+
 router.post("/generate/:year/:month", async (req, res) => {
   try {
     const { year, month } = req.params;
