@@ -22,7 +22,7 @@ export default function Fees() {
 
   const [month, setMonth] = useState(8);
   const [year, setYear] = useState(2026);
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -100,9 +100,9 @@ export default function Fees() {
       0
     );
 
-    
+
     const pending = Number(fee.amountDue || 0) - paid;
-    
+
     setSelectedFee({
       ...fee,
       pending,
@@ -119,7 +119,7 @@ export default function Fees() {
       setHistoryFee(fee);
       setShowPaymentHistory(true);
     }
-  
+
   const sendFeeReminder = (fee) => {
     const phone = fee.student?.phone;
 
@@ -472,25 +472,25 @@ SmartWay Academy`;
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
 
           <div>
-            <h1 className="text-4xl font-bold text-blue-700">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-700">
               Fee Management
             </h1>
 
-            <p className="text-gray-600 mt-2">
+            <p className="text-sm sm:text-base text-gray-600 mt-2">
               Manage monthly student fees
             </p>
           </div>
 
           {/* Month / Year */}
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 sm:flex gap-3">
 
             <select
               value={month}
               onChange={(e) => setMonth(Number(e.target.value))}
-              className="border bg-white p-3 rounded-lg"
+              className="border border-gray-300 bg-white p-3 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value={1}>January</option>
               <option value={2}>February</option>
@@ -509,7 +509,7 @@ SmartWay Academy`;
             <select
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              className="border bg-white p-3 rounded-lg"
+              className="border border-gray-300 bg-white p-3 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value={2026}>2026</option>
               <option value={2027}>2027</option>
@@ -518,7 +518,7 @@ SmartWay Academy`;
             <button
   onClick={generateMonthlyFees}
   disabled={generateLoading}
-  className="bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+className="col-span-2 sm:col-span-1 bg-indigo-600 text-white px-4 py-3 rounded-xl hover:bg-indigo-700 active:scale-95 transition font-semibold shadow-sm"
 >
   {generateLoading
     ? "Generating..."
@@ -529,9 +529,9 @@ SmartWay Academy`;
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
 
-          <div className="bg-blue-600 text-white p-5 rounded-xl shadow">
+          <div className="bg-blue-600 text-white p-4 sm:p-5 rounded-xl shadow-sm">
             <h3 className="text-sm">
               Total Students
             </h3>
@@ -541,7 +541,8 @@ SmartWay Academy`;
             </p>
           </div>
 
-          <div className="bg-yellow-500 text-white p-5 rounded-xl shadow">
+
+            <div className="bg-yellow-600 text-white p-4 sm:p-5 rounded-xl shadow-sm">
             <h3 className="text-sm">
               Total Fee
             </h3>
@@ -551,7 +552,7 @@ SmartWay Academy`;
 </p>
           </div>
 
-          <div className="bg-green-600 text-white p-5 rounded-xl shadow">
+          <div className="bg-green-600 text-white p-4 sm:p-5 rounded-xl shadow-sm">
             <h3 className="text-sm">
               Collected
             </h3>
@@ -561,7 +562,8 @@ SmartWay Academy`;
 </p>
           </div>
 
-          <div className="bg-red-600 text-white p-5 rounded-xl shadow">
+
+            <div className="bg-red-600 text-white p-4 sm:p-5 rounded-xl shadow-sm">
             <h3 className="text-sm">
               Pending
             </h3>
@@ -575,15 +577,14 @@ SmartWay Academy`;
 
         {/* Loading */}
         {loading && (
-          <div className="bg-white p-6 rounded-xl shadow mb-6 text-center">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6 text-center text-gray-600 font-medium">
             Loading fee records...
           </div>
         )}
 
         {/* Fee Status Summary */}
-<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-
-  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-blue-500">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+  <div className="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 border-l-4 border-blue-500 hover:shadow-md transition">
     <p className="text-sm text-gray-500">
       Total
     </p>
@@ -592,7 +593,7 @@ SmartWay Academy`;
     </p>
   </div>
 
-  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-green-500">
+  <div className="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 border-l-4 border-green-500 hover:shadow-md transition">
     <p className="text-sm text-gray-500">
       Paid
     </p>
@@ -601,7 +602,7 @@ SmartWay Academy`;
     </p>
   </div>
 
-  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-yellow-500">
+  <div className="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 border-l-4 border-yellow-500 hover:shadow-md transition">
     <p className="text-sm text-gray-500">
       Partial
     </p>
@@ -610,7 +611,7 @@ SmartWay Academy`;
     </p>
   </div>
 
-  <div className="bg-white p-4 rounded-xl shadow border-l-4 border-red-500">
+  <div className="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 border-l-4 border-red-500 hover:shadow-md transition">
     <p className="text-sm text-gray-500">
       Due
     </p>
@@ -621,7 +622,7 @@ SmartWay Academy`;
 
 </div>
 {/* Search & Filter */}
-<div className="bg-white p-4 rounded-xl shadow mb-6">
+<div className="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 mb-6">
 
   <div className="flex flex-col md:flex-row gap-4">
 
@@ -630,13 +631,13 @@ SmartWay Academy`;
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
       placeholder="Search student, father name or phone..."
-      className="flex-1 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="flex-1 border border-gray-300 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
     />
 
     <select
       value={statusFilter}
       onChange={(e) => setStatusFilter(e.target.value)}
-      className="border border-gray-300 p-3 rounded-lg bg-white"
+      className="border border-gray-300 p-3 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
       <option value="All">All Status</option>
       <option value="Paid">Paid</option>
@@ -646,20 +647,20 @@ SmartWay Academy`;
 
   </div>
 
-  <p className="text-sm text-gray-500 mt-3">
+  <p className="text-xs sm:text-sm text-gray-500 mt-3">
     Showing {filteredFees.length} of {fees.length} students
   </p>
 
 </div>
 
         {/* Fee Table */}
-        <div className="bg-white rounded-2xl shadow overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
           <div className="overflow-x-auto">
 
-            <table className="w-full">
+            <table className="w-full min-w-[1100px]">
 
-              <thead className="bg-blue-600 text-white">
+              <thead className="bg-gray-800 text-white sticky top-0 z-10">
 
                 <tr>
 
@@ -695,7 +696,7 @@ SmartWay Academy`;
                     Status
                   </th>
 
-                  <th className="p-4 text-center">Action</th>
+                  <th className="p-4 text-center min-w-[320px]">Action</th>
 
                 </tr>
 
@@ -717,41 +718,45 @@ SmartWay Academy`;
                   return (
                     <tr
                       key={fee._id}
-                      className="border-b hover:bg-gray-50"
+                      className={`border-b border-gray-100 transition align-middle ${
+                    fee.status === "Paid"
+                      ? "bg-green-100 hover:bg-green-200"
+                      : "hover:bg-blue-50"
+                  }`}
+
                     >
 
-                      <td className="p-4 font-medium">
+                      <td className="p-4 font-semibold text-gray-800 whitespace-nowrap">
                         {fee.student?.studentName}
                       </td>
 
-                      <td className="p-4">
+                      <td className="p-4 text-gray-700 whitespace-nowrap">
                         {fee.student?.className}
                       </td>
 
-                      <td className="p-4">
+                      <td className="p-4 text-gray-700 whitespace-nowrap">
                         {fee.student?.fatherName || "-"}
                       </td>
 
-                      <td className="p-4">
+                      <td className="p-4 whitespace-nowrap">
                         {fee.student?.phone}
                       </td>
 
-                      <td className="p-4 font-semibold">
-  ₹{fee.amountDue}
-</td>
+                  <td className="p-4 font-semibold text-gray-800 whitespace-nowrap">
+                    ₹{fee.amountDue}
+                  </td>
+                      <td className="p-4 text-green-600 font-bold whitespace-nowrap">
+                      ₹{paid}
+                    </td>
 
-                      <td className="p-4 text-green-600 font-bold">
-  ₹{paid}
-</td>
-
-                      <td className="p-4 text-red-600 font-bold">
-                        ₹{pending}
-                      </td>
+                      <td className="p-4 text-red-600 font-bold whitespace-nowrap">
+                      ₹{pending}
+                    </td>
 
                       <td className="p-4 text-center">
 
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                            className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap ${
                             fee.status === "Paid"
                               ? "bg-green-100 text-green-700"
                               : fee.status === "Partial"
@@ -764,54 +769,62 @@ SmartWay Academy`;
 
                       </td>
 
-                      <td className="p-4 text-center">
-                    {fee.status !== "Paid" ? (
-                      <button
-                        onClick={() => openPaymentForm(fee)}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-                      >
-                        Pay Fee
-                      </button>
-                    ) : (
-                      <span className="text-green-600 font-semibold">
-                        Paid
-                      </span>
-                    )}
-                     
-                     {(fee.payments || []).length >0 && (
-                      <button onClick={() => openPaymentHistory(fee)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                      >History</button>
-                     )}
-                     { pending >0 && (
-                      <button
-                        onClick = {() => sendFeeReminder(fee)}
-                        className = "bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                      >
-                        Reminder 
-                      </button>
+                      <td className="p-4">
+  <div className="flex flex-wrap gap-2 justify-center min-w-[300px]">
 
-                     )}
+    {fee.status !== "Paid" && (
+      <button
+        onClick={() => openPaymentForm(fee)}
+        className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 text-sm font-medium whitespace-nowrap"
+      >
+        💰 Pay Fee
+      </button>
+    )}
 
-                     {(fee.payments || []).length > 0 && (
-                        <button
-                          onClick={() => generateReceipt(fee)}
-                          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-                        >
-                          Receipt
-                        </button>
-                      )}
+    {(fee.payments || []).length > 0 && (
+      <button
+        onClick={() => openPaymentHistory(fee)}
+        className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium whitespace-nowrap"
+      >
+        📜 History
+      </button>
+    )}
 
-                      {(fee.payments || []).length > 0 && (
-                      <button
-                        onClick={() => sendPaymentReceiptWhatsApp(fee)}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-                      >
-                        WhatsApp
-                      </button>
-                    )}
+    {pending > 0 && (
+      <button
+        onClick={() => sendFeeReminder(fee)}
+        className="bg-orange-500 text-white px-3 py-2 rounded-lg hover:bg-orange-600 text-sm font-medium whitespace-nowrap"
+      >
+        📲 Reminder
+      </button>
+    )}
 
-                  </td>
+    {(fee.payments || []).length > 0 && (
+      <button
+        onClick={() => generateReceipt(fee)}
+        className="bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 text-sm font-medium whitespace-nowrap"
+      >
+        🧾 Receipt
+      </button>
+    )}
+
+    {(fee.payments || []).length > 0 && (
+      <button
+        onClick={() => sendPaymentReceiptWhatsApp(fee)}
+        className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 text-sm font-medium whitespace-nowrap"
+      >
+        💬 WhatsApp
+      </button>
+    )}
+
+    {fee.status === "Paid" && (
+      <span className="text-green-600 font-semibold text-sm px-2 py-2">
+        ✓ Paid
+      </span>
+    )}
+
+  </div>
+</td>
 
                     </tr>
                   );
@@ -826,15 +839,14 @@ SmartWay Academy`;
 
           {/* Payment Form */}
 {showPaymentForm && selectedFee && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-3 sm:p-4 z-50">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[95vh] overflow-y-auto p-5 sm:p-6">
 
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-
-      <h2 className="text-2xl font-bold text-blue-700 mb-4">
+      <h2 className="text-2xl font-bold text-blue-700 mb-5 border-b border-gray-200 pb-3">
         Pay Fee
       </h2>
 
-      <div className="bg-gray-100 rounded-lg p-4 mb-5">
+      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-5">
 
         <p>
           <strong>Student:</strong>{" "}
@@ -865,7 +877,7 @@ SmartWay Academy`;
           max={selectedFee.pending}
           value={paymentAmount}
           onChange={(e) => setPaymentAmount(e.target.value)}
-          className="w-full border p-3 rounded-lg mb-4"
+          className="w-full border border-gray-300 p-3 rounded-xl text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 mb-4"
           placeholder="Enter amount"
           required
         />
@@ -877,7 +889,7 @@ SmartWay Academy`;
         <select
           value={paymentMode}
           onChange={(e) => setPaymentMode(e.target.value)}
-          className="w-full border p-3 rounded-lg mb-4"
+          className="w-full border border-gray-300 p-3 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
         >
           <option value="UPI">UPI</option>
           <option value="Cash">Cash</option>
@@ -894,12 +906,12 @@ SmartWay Academy`;
         <textarea
           value={paymentNote}
           onChange={(e) => setPaymentNote(e.target.value)}
-          className="w-full border p-3 rounded-lg mb-5"
+          className="w-full border border-gray-300 p-3 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 mb-5"
           placeholder="Optional note"
           rows="3"
         />
 
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 sm:flex gap-3">
 
           <button
             type="button"
@@ -915,7 +927,7 @@ SmartWay Academy`;
           <button
             type="submit"
             disabled={paymentLoading}
-            className="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            className="flex-1 bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 active:scale-95 transition font-semibold shadow-sm disabled:opacity-50"
           >
             {paymentLoading ? "Saving..." : "Pay Fee"}
           </button>
@@ -931,9 +943,9 @@ SmartWay Academy`;
 
 {/* Payment History Modal */}
 {showPaymentHistory && historyFee && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-3 sm:p-4 z-50">
 
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[95vh] overflow-y-auto p-5 sm:p-6">
 
       {/* Header */}
       <div className="flex justify-between items-center mb-5">
@@ -955,7 +967,7 @@ SmartWay Academy`;
             setShowPaymentHistory(false);
             setHistoryFee(null);
           }}
-          className="text-gray-500 hover:text-gray-800 text-2xl font-bold"
+          className="text-gray-500 hover:text-gray-800 text-2xl font-bold w-9 h-9 rounded-full hover:bg-gray-100 transition"
         >
           ×
         </button>
@@ -963,9 +975,9 @@ SmartWay Academy`;
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
 
-        <div className="bg-gray-100 rounded-lg p-4">
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
           <p className="text-sm text-gray-500">
             Fee Due
           </p>
@@ -974,7 +986,7 @@ SmartWay Academy`;
           </p>
         </div>
 
-        <div className="bg-green-100 rounded-lg p-4">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <p className="text-sm text-gray-500">
             Total Paid
           </p>
@@ -989,7 +1001,7 @@ SmartWay Academy`;
           </p>
         </div>
 
-        <div className="bg-red-100 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-sm text-gray-500">
             Pending
           </p>
@@ -1008,26 +1020,26 @@ SmartWay Academy`;
       </div>
 
       {/* Payment List */}
-      <div className="border rounded-xl overflow-hidden">
+      <div className="border rounded-xl overflow-hidden overflow-x-auto">
 
-        <table className="w-full">
+       <table className="w-full min-w-[600px]">
 
-          <thead className="bg-blue-600 text-white">
+          <thead className="bg-gray-800 text-white">
 
             <tr>
-              <th className="p-3 text-left">
+              <th className="p-3 text-left text-sm">
                 Date
               </th>
 
-              <th className="p-3 text-left">
+              <th className="p-3 text-left text-sm">
                 Amount
               </th>
 
-              <th className="p-3 text-left">
+              <th className="p-3 text-left text-sm">
                 Mode
               </th>
 
-              <th className="p-3 text-left">
+              <th className="p-3 text-left text-sm">
                 Note
               </th>
             </tr>
@@ -1044,13 +1056,13 @@ SmartWay Academy`;
                   className="border-b"
                 >
 
-                  <td className="p-3">
+                  <td className="p-3 text-sm">
                     {new Date(
                       payment.paymentDate
                     ).toLocaleDateString("en-IN")}
                   </td>
 
-                  <td className="p-3 font-bold text-green-600">
+                 <td className="p-3 text-sm font-bold text-green-600 whitespace-nowrap">
                     ₹{payment.amount}
                   </td>
 
@@ -1082,7 +1094,7 @@ SmartWay Academy`;
             setShowPaymentHistory(false);
             setHistoryFee(null);
           }}
-          className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
+          className="bg-gray-700 text-white px-6 py-2.5 rounded-xl hover:bg-gray-800 active:scale-95 transition font-medium"
         >
           Close
         </button>
@@ -1096,9 +1108,14 @@ SmartWay Academy`;
 
           {/* No Records */}
           {!loading && fees.length === 0 && (
-            <div className="p-8 text-center text-gray-500">
-              No fee records found for this month.
-            </div>
+            <div className="p-10 text-center text-gray-500">
+            <p className="text-lg font-semibold text-gray-700">
+              No fee records found
+            </p>
+            <p className="text-sm mt-1">
+              No fee records are available for this month.
+            </p>
+          </div>
           )}
 
         </div>
