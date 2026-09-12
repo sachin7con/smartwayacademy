@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 
 export default function Student() {
   const [students, setStudents] = useState([]);
+  const [editingStudent, setEditingStudent] = useState(null);
 
   const [formData, setFormData] = useState({
     studentName: "",
@@ -79,6 +80,55 @@ const totalPending = students.reduce(
       console.log(error);
     }
   };
+
+ // Edit Student
+const editStudent = (student) => {
+  setEditingStudent(student._id);
+
+  setFormData({
+    studentName: student.studentName || "",
+    className: student.className || "",
+    fatherName: student.fatherName || "",
+    phone: student.phone || "",
+    monthlyFee: student.monthlyFee || "",
+    paidFee: student.paidFee || "",
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
+const handleUpdateStudent = async (e) => {
+  e.preventDefault();
+
+  try {
+    await axios.put(
+      `https://smartwayacademy.onrender.com/api/students/${editingStudent}`,
+      formData
+    );
+
+    alert("Student Updated Successfully");
+
+    setEditingStudent(null);
+
+    setFormData({
+      studentName: "",
+      className: "",
+      fatherName: "",
+      phone: "",
+      monthlyFee: "",
+      paidFee: "",
+    });
+
+    fetchStudents();
+  } catch (error) {
+    console.log(error);
+    alert("Failed to update student");
+  }
+};
+
 
   // Delete Student
   const deleteStudent = async (id) => {
@@ -205,11 +255,11 @@ const generateReceipt = (student) => {
         <div className="bg-white p-6 rounded-2xl shadow mb-10">
 
           <h2 className="text-2xl font-bold mb-4">
-            Add New Student
+            {editingStudent ? "Edit Student" : "Add New Student"}
           </h2>
 
           <form
-            onSubmit={handleSubmit}
+            onSubmit={editingStudent ? handleUpdateStudent : handleSubmit}
             className="grid md:grid-cols-3 gap-4"
           >
 
@@ -275,8 +325,29 @@ const generateReceipt = (student) => {
               type="submit"
               className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
             >
-              Add Student
+              {editingStudent ? "Update Student" : "Add Student"}
             </button>
+
+            {editingStudent && (
+  <button
+    type="button"
+    onClick={() => {
+      setEditingStudent(null);
+
+      setFormData({
+        studentName: "",
+        className: "",
+        fatherName: "",
+        phone: "",
+        monthlyFee: "",
+        paidFee: "",
+      });
+    }}
+    className="bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600"
+  >
+    Cancel
+  </button>
+)}
 
           </form>
 
@@ -374,22 +445,31 @@ const generateReceipt = (student) => {
 
         {/* Actions */}
         <td className="p-4">
-          <div className="flex gap-2 justify-center">
-            <button
-              onClick={() => payFee(student._id)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg"
-            >
-              Pay Fee
-            </button>
+  <div className="flex gap-2 justify-center flex-wrap">
 
-            <button
-              onClick={() => deleteStudent(student._id)}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            >
-              Delete
-            </button>
-          </div>
-        </td>
+    <button
+      onClick={() => editStudent(student)}
+      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => payFee(student._id)}
+      className="bg-green-600 text-white px-4 py-2 rounded-lg"
+    >
+      Pay Fee
+    </button>
+
+    <button
+      onClick={() => deleteStudent(student._id)}
+      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+    >
+      Delete
+    </button>
+
+  </div>
+</td>
       </tr>
     );
   })}
