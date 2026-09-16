@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
+import { useSearchParams } from "react-router-dom";
+
 
 export default function Fees() {
+  const [searchParams] = useSearchParams();
   const [fees, setFees] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -20,8 +23,13 @@ export default function Fees() {
 
   const [paymentLoading, setPaymentLoading] = useState(false);
 
-  const [month, setMonth] = useState(8);
-  const [year, setYear] = useState(2026);
+  const [month, setMonth] = useState(
+  Number(searchParams.get("month")) || 8
+);
+
+const [year, setYear] = useState(
+  Number(searchParams.get("year")) || 2026
+);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");

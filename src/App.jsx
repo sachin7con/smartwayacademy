@@ -1,12 +1,13 @@
 // SGN
 import classroomImage from "./assets/class2.jpeg";
-import Navbar from "./components/Navbar";
+import Navbar, { AdminNavbar } from "./components/Navbar";
 import { useState } from "react";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import Admin from "./pages/Admin";
 import Student from "./pages/Student";
 import Fees from "./pages/Fees";
+import Dashboard from "./pages/Dashboard";
 
 import Login from "./pages/Login";
 import {motion } from "framer-motion";
@@ -300,26 +301,54 @@ export default function SmartWayAcademyWebsite() {
 
          {/* LOGIN PAGE */}
     <Route path="/login" element={<Login />} />
+
+
     
          {/* ADMIN PAGE */}
     <Route
-      path="/admin"
-      element={<ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-      }
-    />
-     <Route
-   path="/admin/fees"
-    element={
+  path="/admin"
+  element={
     <ProtectedRoute>
-      <Fees />
+      <>
+        <AdminNavbar />
+        <Dashboard />
+      </>
     </ProtectedRoute>
   }
-      />
+/>
+
+     <Route
+  path="/admin/fees"
+  element={
+    <ProtectedRoute>
+      <>
+        <AdminNavbar />
+        <Fees />
+      </>
+    </ProtectedRoute>
+  }
+/>
+    <Route
+  path="/admin/inquiries"
+  element={
+    <ProtectedRoute>
+      <>
+        <AdminNavbar />
+        <Admin />
+      </>
+    </ProtectedRoute>
+  }
+/>
+
     <Route
       path="/students"
-      element={<Student />}
+      element={
+      <ProtectedRoute>
+        <>
+        <AdminNavbar />
+        <Student />
+      </>
+      </ProtectedRoute>}
       />
 
 </Routes>
