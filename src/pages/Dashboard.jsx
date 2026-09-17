@@ -524,15 +524,13 @@ const feeYear = selectedYear;
                         <td className="px-5 py-4">
 
                           <span className="text-sm text-gray-600">
-                            {payment.mode || "UPI"}
+                            {payment.paymentMode || "UPI"}
                           </span>
 
                         </td>
 
                         <td className="px-5 py-4 text-sm text-gray-500">
-                          {formatDate(
-                            payment.date ||
-                              payment.paymentDate
+                          {formatDate( payment.paymentDate
                           )}
                         </td>
 

@@ -1,33 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import jsPDF from "jspdf";
 
 export default function Student() {
   const [students, setStudents] = useState([]);
   const [editingStudent, setEditingStudent] = useState(null);
 
-  const [formData, setFormData] = useState({
-    studentName: "",
-    className: "",
-    fatherName: "",
-    phone: "",
-    monthlyFee: "",
-    paidFee: "",
-  });
-
-  const totalCollection = students.reduce(
-  (sum, s) => sum + Number(s.paidFee || 0),
-  0
-);
-
-const totalPending = students.reduce(
-  (sum, s) =>
-    sum +
-    (Number(s.monthlyFee || 0) -
-      Number(s.paidFee || 0)),
-  0
-);
-
+const [formData, setFormData] = useState({
+      studentName: "",
+      className: "",
+      fatherName: "",
+      phone: "",
+      monthlyFee: "",
+      admissionDate: new Date().toISOString().split("T")[0],
+    });
+  
   // Fetch Students
   const fetchStudents = async () => {
     try {
@@ -66,14 +52,13 @@ const totalPending = students.reduce(
       alert("Student Added Successfully");
 
       setFormData({
-        studentName: "",
-        className: "",
-        fatherName: "",
-        phone: "",
-        monthlyFee: "",
-        paidFee: "",
-      });
-
+      studentName: "",
+      className: "",
+      fatherName: "",
+      phone: "",
+      monthlyFee: "",
+      admissionDate: new Date().toISOString().split("T")[0],
+    });
       fetchStudents();
 
     } catch (error) {
@@ -86,13 +71,15 @@ const editStudent = (student) => {
   setEditingStudent(student._id);
 
   setFormData({
-    studentName: student.studentName || "",
-    className: student.className || "",
-    fatherName: student.fatherName || "",
-    phone: student.phone || "",
-    monthlyFee: student.monthlyFee || "",
-    paidFee: student.paidFee || "",
-  });
+  studentName: student.studentName || "",
+  className: student.className || "",
+  fatherName: student.fatherName || "",
+  phone: student.phone || "",
+  monthlyFee: student.monthlyFee || "",
+  admissionDate: student.admissionDate
+    ? new Date(student.admissionDate).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0],
+});
 
   window.scrollTo({
     top: 0,
@@ -114,13 +101,13 @@ const handleUpdateStudent = async (e) => {
     setEditingStudent(null);
 
     setFormData({
-      studentName: "",
-      className: "",
-      fatherName: "",
-      phone: "",
-      monthlyFee: "",
-      paidFee: "",
-    });
+    studentName: "",
+    className: "",
+    fatherName: "",
+    phone: "",
+    monthlyFee: "",
+    admissionDate: new Date().toISOString().split("T")[0],
+  });
 
     fetchStudents();
   } catch (error) {
@@ -146,77 +133,7 @@ const handleUpdateStudent = async (e) => {
     }
   };
 
-  const payFee = async (id) => {
-  const amount = prompt("Enter fee amount");
-
-  if (!amount) return;
-
-  try {
-    await axios.put(
-      `https://smartwayacademy.onrender.com/api/students/pay/${id}`,
-      {
-        amount: Number(amount),
-      }
-    );
-
-    alert("Fee Updated Successfully");
-
-    fetchStudents();
-
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const generateReceipt = (student) => {
-
-  const doc = new jsPDF();
-
-  doc.setFontSize(18);
-
-  doc.text(
-    "SmartWay Academy Fee Receipt",
-    20,
-    20
-  );
-
-  doc.setFontSize(12);
-
-  doc.text(
-    `Student: ${student.studentName}`,
-    20,
-    40
-  );
-
-  doc.text(
-    `Class: ${student.className}`,
-    20,
-    50
-  );
-
-  doc.text(
-    `Phone: ${student.phone}`,
-    20,
-    60
-  );
-
-  doc.text(
-    `Paid Fee: ₹${student.paidFee}`,
-    20,
-    70
-  );
-
-  doc.text(
-    `Date: ${new Date().toLocaleDateString()}`,
-    20,
-    80
-  );
-
-  doc.save(
-    `${student.studentName}-receipt.pdf`
-  );
-};
-
+  
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
@@ -234,19 +151,7 @@ const generateReceipt = (student) => {
           </p>
         </div>
 
-        <div className="bg-green-600 text-white p-5 rounded-xl">
-          <h3>Total Collection</h3>
-          <p className="text-3xl font-bold">
-            ₹{totalCollection}
-          </p>
-        </div>
-
-        <div className="bg-red-600 text-white p-5 rounded-xl">
-          <h3>Pending Fee</h3>
-          <p className="text-3xl font-bold">
-            ₹{totalPending}
-          </p>
-        </div>
+      
 
       </div>
 
@@ -311,15 +216,14 @@ const generateReceipt = (student) => {
               className="border p-3 rounded-lg"
               required
             />
-
-            <input
-              type="number"
-              name="paidFee"
-              placeholder="Paid Fee"
-              value={formData.paidFee}
-              onChange={handleChange}
-              className="border p-3 rounded-lg"
-            />
+                  <input
+                  type="date"
+                  name="admissionDate"
+                  value={formData.admissionDate}
+                  onChange={handleChange}
+                  className="border p-3 rounded-lg"
+                  required
+                />
 
             <button
               type="submit"
@@ -340,7 +244,7 @@ const generateReceipt = (student) => {
         fatherName: "",
         phone: "",
         monthlyFee: "",
-        paidFee: "",
+        admissionDate: new Date().toISOString().split("T")[0],
       });
     }}
     className="bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600"
@@ -362,19 +266,17 @@ const generateReceipt = (student) => {
             <thead className="bg-blue-600 text-white">
 
               <tr>
+                <th className="p-4 text-center">#</th>
                 <th className="p-4 text-left">Student</th>
-                <th className="p-4 text-left">Father</th>
+                <th className="p-4 text-left">Parent</th>
                 <th className="p-4 text-left">Class</th>
                 <th className="p-4 text-left">Phone</th>
+                <th className="p-4 text-left">Join Date</th>
                 <th className="p-4 text-left">Monthly Fee</th>
-                <th className="p-4 text-left">Paid</th>
-                <th className="p-4 text-left">Pending</th>
                 <th className="p-4 text-center">
                   Reminder
                 </th>
-                <th className="p-4 text-center">
-                  Receipt
-                </th>
+                
                 <th className="p-4 text-center">
                   Action
                 </th>
@@ -383,16 +285,17 @@ const generateReceipt = (student) => {
             </thead>
 
             <tbody>
-  {students.map((student) => {
-    const pendingFee =
-      Number(student.monthlyFee) -
-      Number(student.paidFee);
+  {students.map((student, index) => {
+    
 
     return (
       <tr
         key={student._id}
         className="border-b hover:bg-gray-50"
       >
+        <td className="p-4 text-center">
+          {index + 1}
+        </td>
         <td className="p-4">
           {student.studentName}
         </td>
@@ -409,18 +312,18 @@ const generateReceipt = (student) => {
           {student.phone}
         </td>
 
+        <td>
+          { student.admissionDate ? 
+            new Date(student.admissionDate).toLocaleDateString("en-IN")
+            : "-"
+           }
+        </td>
+
         <td className="p-4">
           ₹{student.monthlyFee}
         </td>
 
-        <td className="p-4 text-green-600 font-bold">
-          ₹{student.paidFee}
-        </td>
-
-        <td className="p-4 text-red-600 font-bold">
-          ₹{pendingFee}
-        </td>
-
+        
         {/* Reminder */}
         <td className="p-4 text-center">
           <a
@@ -433,15 +336,7 @@ const generateReceipt = (student) => {
           </a>
         </td>
 
-        {/* Receipt */}
-        <td className="p-4 text-center">
-          <button
-            onClick={() => generateReceipt(student)}
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-          >
-            Receipt
-          </button>
-        </td>
+        
 
         {/* Actions */}
         <td className="p-4">
@@ -454,12 +349,7 @@ const generateReceipt = (student) => {
       Edit
     </button>
 
-    <button
-      onClick={() => payFee(student._id)}
-      className="bg-green-600 text-white px-4 py-2 rounded-lg"
-    >
-      Pay Fee
-    </button>
+  
 
     <button
       onClick={() => deleteStudent(student._id)}

@@ -18,6 +18,7 @@ export default function Fees() {
   const [historyFee, setHistoryFee] = useState(null);
 
   const [paymentAmount, setPaymentAmount] = useState("");
+  const [paymentDate, setPaymentDate] = useState( new Date().toISOString().split("T")[0]);
   const [paymentMode, setPaymentMode] = useState("UPI");
   const [paymentNote, setPaymentNote] = useState("");
 
@@ -117,6 +118,7 @@ const [year, setYear] = useState(
     });
 
     setPaymentAmount("");
+    setPaymentDate(new Date().toISOString().split("T")[0]);
     setPaymentMode("UPI");
     setPaymentNote("");
     setShowPaymentForm(true);
@@ -402,6 +404,7 @@ SmartWay Academy`;
         `https://smartwayacademy.onrender.com/api/fees/pay/${selectedFee._id}`,
         {
           amount,
+          paymentDate,
           paymentMode,
           note: paymentNote,
         }
@@ -889,7 +892,17 @@ className="col-span-2 sm:col-span-1 bg-indigo-600 text-white px-4 py-3 rounded-x
           placeholder="Enter amount"
           required
         />
+        <label className="block mb-2 font-semibold">
+          Payment Date
+        </label>
 
+        <input
+          type="date"
+          value={paymentDate}
+          onChange={(e) => setPaymentDate(e.target.value)}
+          className="w-full border border-gray-300 p-3 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+          required
+        />
         <label className="block mb-2 font-semibold">
           Payment Mode
         </label>

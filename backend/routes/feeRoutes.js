@@ -41,7 +41,7 @@ router.get("/month/:year/:month", async (req, res) => {
 
 router.put("/pay/:id", async (req, res) => {
   try {
-    const { amount, paymentMode, note } = req.body;
+    const { amount, paymentDate, paymentMode, note } = req.body;
 
     // Validate amount
     const paymentAmount = Number(amount);
@@ -83,6 +83,7 @@ router.put("/pay/:id", async (req, res) => {
     // Add payment
     fee.payments.push({
       amount: paymentAmount,
+      paymentDate: paymentDate || new Date(),
       paymentMode: paymentMode || "UPI",
       note: note || "",
     });
