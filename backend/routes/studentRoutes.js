@@ -1,5 +1,6 @@
 const express = require("express");
-const Student = require("../models/Student")
+const Student = require("../models/Student");
+const Fee = require("../models/Fee");
 
 const router = express.Router();
 
@@ -54,12 +55,26 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    await Student.findByIdAndDelete(req.params.id);
+    const student = await Student.findById(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found",
+      });
+    }
+
+    await Fee.deleteMany({
+      student: student._id,
+    });
+
+    await Student.findByIdAndDelete(student._id);
 
     res.json({
-      success: true,
+      message: "Student and related fee records deleted successfully",
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       message: error.message,
     });

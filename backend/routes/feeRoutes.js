@@ -16,18 +16,14 @@ router.get("/month/:year/:month", async (req, res) => {
     const { year, month } = req.params;
 
     const fees = await Fee.find({
-      year: Number(year),
-      month: Number(month),
-    }).populate(
-      "student",
-      "studentName className fatherName phone monthlyFee"
-    );
+      year,
+      month,
+    }).populate("student");
 
-    res.json({
-      success: true,
-      count: fees.length,
-      fees,
-    });
+    // Remove fee records whose student no longer exists
+    const validFees = fees.filter((fee) => fee.student !== null);
+
+    res.json(validFees);
   } catch (error) {
     console.error(error);
 
@@ -38,7 +34,6 @@ router.get("/month/:year/:month", async (req, res) => {
     });
   }
 });
-
 router.put("/pay/:id", async (req, res) => {
   try {
     const { amount, paymentDate, paymentMode, note } = req.body;

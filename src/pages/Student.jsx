@@ -6,13 +6,14 @@ export default function Student() {
   const [editingStudent, setEditingStudent] = useState(null);
 
 const [formData, setFormData] = useState({
-      studentName: "",
-      className: "",
-      fatherName: "",
-      phone: "",
-      monthlyFee: "",
-      admissionDate: new Date().toISOString().split("T")[0],
-    });
+  studentName: "",
+  className: "",
+  fatherName: "",
+  phone: "",
+  monthlyFee: "",
+  admissionDate: new Date().toISOString().split("T")[0],
+  status: "Active",
+});
   
   // Fetch Students
   const fetchStudents = async () => {
@@ -58,6 +59,7 @@ const [formData, setFormData] = useState({
       phone: "",
       monthlyFee: "",
       admissionDate: new Date().toISOString().split("T")[0],
+      status: "Active",
     });
       fetchStudents();
 
@@ -79,6 +81,7 @@ const editStudent = (student) => {
   admissionDate: student.admissionDate
     ? new Date(student.admissionDate).toISOString().split("T")[0]
     : new Date().toISOString().split("T")[0],
+  status: student.status || "Active",
 });
 
   window.scrollTo({
@@ -107,6 +110,7 @@ const handleUpdateStudent = async (e) => {
     phone: "",
     monthlyFee: "",
     admissionDate: new Date().toISOString().split("T")[0],
+    status: "Active",
   });
 
     fetchStudents();
@@ -224,7 +228,15 @@ const handleUpdateStudent = async (e) => {
                   className="border p-3 rounded-lg"
                   required
                 />
-
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="border p-3 rounded-lg"
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
             <button
               type="submit"
               className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
@@ -245,6 +257,7 @@ const handleUpdateStudent = async (e) => {
         phone: "",
         monthlyFee: "",
         admissionDate: new Date().toISOString().split("T")[0],
+        status: "Active",
       });
     }}
     className="bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600"
@@ -273,6 +286,10 @@ const handleUpdateStudent = async (e) => {
                 <th className="p-4 text-left">Phone</th>
                 <th className="p-4 text-left">Join Date</th>
                 <th className="p-4 text-left">Monthly Fee</th>
+                <th className="p-4 text-center">
+                  Status
+                </th>
+
                 <th className="p-4 text-center">
                   Reminder
                 </th>
@@ -322,6 +339,17 @@ const handleUpdateStudent = async (e) => {
         <td className="p-4">
           ₹{student.monthlyFee}
         </td>
+        <td className="p-4 text-center">
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+            student.status === "Active"
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-200 text-gray-700"
+          }`}
+        >
+          {student.status || "Active"}
+        </span>
+      </td>
 
         
         {/* Reminder */}
@@ -352,7 +380,17 @@ const handleUpdateStudent = async (e) => {
   
 
     <button
-      onClick={() => deleteStudent(student._id)}
+      onClick={() =>{
+        
+        const confirmed = window.confirm(
+          `Are you sure to want to Delete ${student.studentName}?`
+        )
+
+
+        if(confirmed){
+          deleteStudent(student._id)
+        }
+        } }
       className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
     >
       Delete
