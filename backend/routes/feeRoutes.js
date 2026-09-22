@@ -23,7 +23,11 @@ router.get("/month/:year/:month", async (req, res) => {
     // Remove fee records whose student no longer exists
     const validFees = fees.filter((fee) => fee.student !== null);
 
-    res.json(validFees);
+    res.json({
+  success: true,
+  count: validFees.length,
+  fees: validFees,
+});
   } catch (error) {
     console.error(error);
 
