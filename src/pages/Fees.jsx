@@ -24,13 +24,10 @@ export default function Fees() {
 
   const [paymentLoading, setPaymentLoading] = useState(false);
 
-  const [month, setMonth] = useState(
-  Number(searchParams.get("month")) || 8
-);
+  const today = new Date();
 
-const [year, setYear] = useState(
-  Number(searchParams.get("year")) || 2026
-);
+const [month, setMonth] = useState(today.getMonth() + 1);
+const [year, setYear] = useState(today.getFullYear());
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -117,7 +114,7 @@ const [year, setYear] = useState(
       pending,
     });
 
-    setPaymentAmount("");
+    setPaymentAmount(String(Math.max(0, pending)));
     setPaymentDate(new Date().toISOString().split("T")[0]);
     setPaymentMode("UPI");
     setPaymentNote("");

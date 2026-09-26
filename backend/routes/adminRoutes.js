@@ -1,38 +1,74 @@
-const express = require("express")
-const jwt = require("jsonwebtoken")
+const express = require("express");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
-const ADMIN_EMAIL = "sachin7con@gmail.com";
-const ADMIN_PASSWORD = "123"
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-router.post("/login", (req, res) =>{
-    const {email, password} = req.body;
+const DEMO_EMAIL = process.env.DEMO_EMAIL;
+const DEMO_PASSWORD = process.env.DEMO_PASSWORD;
 
-    try{
-        if(email !== ADMIN_EMAIL ||
-            password !== ADMIN_PASSWORD
-        ){
-            return res.status(401).json({success: false, message: "Invalid credentials"})
-        }
-        
-        const token = jwt.sign(
-            {email},
-            "smartwaysecretkey",
-            {expiresIn: "7d"}
-        );
+const JWT_SECRET = process.env.JWT_SECRET;
+console.log("ADMIN PASSWORD LOADED:", ADMIN_PASSWORD);
 
-        res.json({
-            success: true, 
-            token,
-        })
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
 
-        }
-        catch(error) {
-            res.status(500).json({message: error.message,})
-        }
+  try {
+    // REAL ADMIN LOGIN
+    if (
+      email === ADMIN_EMAIL &&
+      password === ADMIN_PASSWORD
+    ) {
+      const token = jwt.sign(
+        {
+          email,
+          role: "admin",
+        },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
 
+      return res.json({
+        success: true,
+        token,
+        role: "admin",
+      });
+    }
 
-})
+    // DEMO ADMIN LOGIN
+    if (
+      email === DEMO_EMAIL &&
+      password === DEMO_PASSWORD
+    ) {
+      const token = jwt.sign(
+        {
+          email,
+          role: "demo",
+        },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      return res.json({
+        success: true,
+        token,
+        role: "demo",
+      });
+    }
+
+    return res.status(401).json({
+      success: false,
+      message: "Invalid credentials",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 
 module.exports = router;

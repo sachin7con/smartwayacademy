@@ -38,7 +38,7 @@ https://YOUR_YOUTUBE_OR_DRIVE_LINK
 
 # 🔐 Recruiter Test Credentials
 
-## Admin
+## Admin (Demo)
 
 Email:
 ```
