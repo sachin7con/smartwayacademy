@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 export default function Student() {
   const [students, setStudents] = useState([]);
@@ -18,8 +18,8 @@ const [formData, setFormData] = useState({
   // Fetch Students
   const fetchStudents = async () => {
     try {
-      const response = await axios.get(
-        "https://smartwayacademy.onrender.com/api/students"
+      const response = await api.get(
+        "/students"
       );
 
       setStudents(response.data);
@@ -45,8 +45,8 @@ const [formData, setFormData] = useState({
     e.preventDefault();
 
     try {
-      await axios.post(
-        "https://smartwayacademy.onrender.com/api/students",
+      await api.post(
+        "/students",
         formData
       );
 
@@ -94,8 +94,8 @@ const handleUpdateStudent = async (e) => {
   e.preventDefault();
 
   try {
-    await axios.put(
-      `https://smartwayacademy.onrender.com/api/students/${editingStudent}`,
+    await api.put(
+      `/students/${editingStudent}`,
       formData
     );
 
@@ -124,8 +124,8 @@ const handleUpdateStudent = async (e) => {
   // Delete Student
   const deleteStudent = async (id) => {
     try {
-      await axios.delete(
-        `https://smartwayacademy.onrender.com/api/students/${id}`
+      await api.delete(
+        `/students/${id}`
       );
 
       alert("Student Deleted");

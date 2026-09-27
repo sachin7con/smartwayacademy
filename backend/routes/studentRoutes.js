@@ -1,8 +1,13 @@
 const express = require("express");
 const Student = require("../models/Student");
 const Fee = require("../models/Fee");
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 const router = express.Router();
+
+router.use(authMiddleware);
+router.use(adminMiddleware);
 
 router.post("/", async(req, res) => {
     try{

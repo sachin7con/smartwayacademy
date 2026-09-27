@@ -10,7 +10,6 @@ const DEMO_EMAIL = process.env.DEMO_EMAIL;
 const DEMO_PASSWORD = process.env.DEMO_PASSWORD;
 
 const JWT_SECRET = process.env.JWT_SECRET;
-console.log("ADMIN PASSWORD LOADED:", ADMIN_PASSWORD);
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body;

@@ -1,7 +1,9 @@
-    const express = require("express");
-    const Inquiry = require("../models/Inquiry");
-    const router = express.Router();
+const express = require("express");
+const Inquiry = require("../models/Inquiry");
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
+const router = express.Router();
 
     router.post("/", async (req, res) =>{
         try{
@@ -16,6 +18,11 @@
 
         }
     } );
+
+// Protect all inquiry management routes below this point
+    router.use(authMiddleware);
+    router.use(adminMiddleware);
+
 
     router.get("/", async (req, res) =>{
         try{

@@ -2,8 +2,13 @@
 const express = require("express");
 const Fee = require("../models/Fee");
 const Student = require("../models/Student");
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 const router = express.Router();
+
+router.use(authMiddleware);
+router.use(adminMiddleware);
 
 router.get("/", (req, res)=> {
     res.json({

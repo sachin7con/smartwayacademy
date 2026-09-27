@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
@@ -33,17 +33,11 @@ const feeYear = selectedYear;
 
       const [studentsResponse, feesResponse, inquiriesResponse] =
         await Promise.all([
-          axios.get(
-            "https://smartwayacademy.onrender.com/api/students"
-          ),
+          api.get("/students"),
 
-          axios.get(
-            `https://smartwayacademy.onrender.com/api/fees/month/${feeYear}/${feeMonth}`
-          ),
+          api.get(`/fees/month/${feeYear}/${feeMonth}`),
 
-          axios.get(
-            "https://smartwayacademy.onrender.com/api/inquiries"
-          ),
+          api.get("/inquiries"),
         ]);
 
       setStudents(studentsResponse.data || []);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -24,8 +24,8 @@ export default function Login() {
 
     try {
 
-      const response = await axios.post(
-        "https://smartwayacademy.onrender.com/api/admin/login",
+      const response = await api.post(
+        "/admin/login",
         formData
       );
 

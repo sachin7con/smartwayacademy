@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import * as XLSX from "xlsx";
 import {saveAs} from "file-saver";
 
@@ -22,8 +22,8 @@ export default function Admin() {
   const fetchInquiries = async () => {
     try {
 
-      const response = await axios.get(
-        "https://smartwayacademy.onrender.com/api/inquiries"
+      const response = await api.get(
+        "/inquiries"
       );
 
       setInquiries(response.data);
@@ -36,7 +36,7 @@ export default function Admin() {
   //UPDATE NOTES
   const updateNotes = async(id, notes) => {
     try{
-        await axios.put(`https://smartwayacademy.onrender.com/api/inquiries/${id}`, {notes})
+        await api.put(`/inquiries/${id}`, {notes})
         
         fetchInquiries();
     
@@ -55,7 +55,7 @@ export default function Admin() {
             notes,
             followUpDate
         });
-        await axios.put(`https://smartwayacademy.onrender.com/api/inquiries/${id}`,
+        await api.put(`/inquiries/${id}`,
             {status, notes, followUpDate}
         )
         alert("Lead updated");
@@ -69,8 +69,8 @@ export default function Admin() {
   //UPDATE Status
         const updateStatus = async (id, status) => {
         try {
-            await axios.put(
-            `https://smartwayacademy.onrender.com/api/inquiries/${id}`,
+            await api.put(
+            `/inquiries/${id}`,
             { status }
             );
 
@@ -87,8 +87,8 @@ export default function Admin() {
 
     try {
 
-      await axios.delete(
-        `https://smartwayacademy.onrender.com/api/inquiries/${id}`
+      await api.delete(
+        `/inquiries/${id}`
       );
 
       alert("Inquiry Deleted");

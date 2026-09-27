@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import jsPDF from "jspdf";
 import { useSearchParams } from "react-router-dom";
 
@@ -36,8 +36,8 @@ const [year, setYear] = useState(today.getFullYear());
     try {
       setLoading(true);
 
-      const response = await axios.get(
-        `https://smartwayacademy.onrender.com/api/fees/month/${year}/${month}`
+      const response = await api.get(
+        `/fees/month/${year}/${month}`
       );
 
       setFees(response.data.fees || []);
@@ -71,8 +71,8 @@ const [year, setYear] = useState(today.getFullYear());
   try {
     setGenerateLoading(true);
 
-    const response = await axios.post(
-      `https://smartwayacademy.onrender.com/api/fees/generate/${year}/${month}`
+    const response = await api.post(
+      `/fees/generate/${year}/${month}`
     );
 
     if (response.data.success) {
@@ -397,8 +397,8 @@ SmartWay Academy`;
     try{
       setPaymentLoading(true);
 
-      const response = await axios.put(
-        `https://smartwayacademy.onrender.com/api/fees/pay/${selectedFee._id}`,
+      const response = await api.put(
+        `/fees/pay/${selectedFee._id}`,
         {
           amount,
           paymentDate,
