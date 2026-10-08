@@ -8,6 +8,12 @@ import Admin from "./pages/Admin";
 import Student from "./pages/Student";
 import Fees from "./pages/Fees";
 import Dashboard from "./pages/Dashboard";
+import DemoInquiries from "./pages/DemoInquiries";
+
+import DemoDashboard from "./pages/DemoDashboard";
+import DemoProtectedRoute from "./components/DemoProtectedRoute";
+import DemoStudents from "./pages/DemoStudents";
+import DemoFees from "./pages/DemoFees";
 
 import Login from "./pages/Login";
 import {motion } from "framer-motion";
@@ -302,7 +308,42 @@ export default function SmartWayAcademyWebsite() {
          {/* LOGIN PAGE */}
     <Route path="/login" element={<Login />} />
 
+    {/* DEMO DASHBOARD */}
+<Route
+  path="/demo"
+  element={
+    <DemoProtectedRoute>
+      <DemoDashboard />
+    </DemoProtectedRoute>
+  }
+/>
 
+<Route
+  path="/demo/students"
+  element={
+    <DemoProtectedRoute>
+      <DemoStudents />
+    </DemoProtectedRoute>
+  }
+/>
+
+<Route
+  path="/demo/fees"
+  element={
+    <DemoProtectedRoute>
+      <DemoFees />
+    </DemoProtectedRoute>
+  }
+/>
+
+<Route
+  path="/demo/inquiries"
+  element={
+    <DemoProtectedRoute>
+      <DemoInquiries />
+    </DemoProtectedRoute>
+  }
+/>
     
          {/* ADMIN PAGE */}
     <Route

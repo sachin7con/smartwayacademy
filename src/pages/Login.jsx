@@ -33,10 +33,14 @@ export default function Login() {
         "token",
         response.data.token
       );
+      localStorage.setItem(
+      "role",
+      response.data.role
+    );
 
       alert("Login Successful");
 
-      navigate("/admin");
+      navigate(response.data.role === "demo" ? "/demo" : "/admin");
 
     } catch (error) {
 

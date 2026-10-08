@@ -56,6 +56,7 @@ export default function Navbar() {
 export function AdminNavbar() {
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     window.location.href = "/login";
   };
 
