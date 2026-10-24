@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 import jsPDF from "jspdf";
 
 export default function DemoFees() {
@@ -21,27 +21,35 @@ export default function DemoFees() {
   const month = 10;
 
   const loadFees = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  try {
+    setLoading(true);
+    setError("");
 
-      const response = await axios.get(
-        `http://localhost:5000/api/demo/fees/month/${year}/${month}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+    const response = await api.get(
+      `/demo/fees/month/${year}/${month}`
+    );
 
-      setFees(response.data.fees || []);
-    } catch (err) {
-      console.error(err);
-      setError("Unable to load demo fees.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = response.data;
+
+    const feeList = Array.isArray(data?.fees)
+      ? data.fees
+      : Array.isArray(data?.data?.fees)
+      ? data.data.fees
+      : Array.isArray(data)
+      ? data
+      : [];
+
+    setFees(feeList);
+  } catch (err) {
+    console.error(
+      "Unable to load demo fees:",
+      err.response?.data || err.message
+    );
+    setError("Unable to load demo fees. Please refresh and try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadFees();
@@ -204,19 +212,14 @@ export default function DemoFees() {
     try {
       setPaymentLoading(true);
 
-      await axios.post(
-        `http://localhost:5000/api/demo/fees/${selectedFee._id}/payment`,
-        {
-          amount,
-          mode: paymentMode,
-          note: paymentNote,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.post(
+  `/demo/fees/${selectedFee._id}/payment`,
+  {
+    amount,
+    mode: paymentMode,
+    note: paymentNote,
+  }
+);
 
       closePayment();
       await loadFees();
@@ -447,15 +450,19 @@ export default function DemoFees() {
   <button
     onClick={async () => {
       try {
-        const response = await axios.post(
-          `http://localhost:5000/api/demo/fees/${fee._id}/reminder`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+        const response = await api.post(
+        `/demo/fees/${fee._id}/reminder`,
+        {}
+      );
+
+      if (response.data?.whatsappUrl) {
+        window.open(response.data.whatsappUrl, "_blank");
+      } else {
+        alert(
+          response.data?.message ||
+            "Demo Fee Reminder link was not returned."
         );
+      }
 
         if (response.data.success && response.data.whatsappUrl) {
           window.open(response.data.whatsappUrl, "_blank");
@@ -501,15 +508,19 @@ export default function DemoFees() {
   <button
     onClick={async () => {
       try {
-        const response = await axios.post(
-          `http://localhost:5000/api/demo/fees/${fee._id}/whatsapp`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+        const response = await api.post(
+          `/demo/fees/${fee._id}/whatsapp`,
+          {}
         );
+
+        if (response.data?.whatsappUrl) {
+          window.open(response.data.whatsappUrl, "_blank");
+        } else {
+          alert(
+            response.data?.message ||
+              "Demo WhatsApp link was not returned."
+          );
+        }
 
         if (response.data.success && response.data.whatsappUrl) {
           window.open(response.data.whatsappUrl, "_blank");

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 import DemoNavbar from "../components/DemoNavbar";
 
@@ -10,58 +10,59 @@ export default function DemoDashboard() {
           const [loading, setLoading] = useState(true);
           const navigate = useNavigate();
 
-        useEffect(() => {
-    const loadDemoDashboard = async () => {
-      try {
-        const token = localStorage.getItem("token");
+        
+useEffect(() => {
+  let cancelled = false;
 
-        const headers = {
-          Authorization: `Bearer ${token}`,
-        };
+  const loadDemoDashboard = async () => {
+    setLoading(true);
 
-        const [studentsResponse, feesResponse, inquiriesResponse] =
-          await Promise.all([
-            axios.get(
-              "http://localhost:5000/api/demo/students",
-              { headers }
-            ),
+    try {
+      const [
+        studentsResponse,
+        feesResponse,
+        inquiriesResponse,
+      ] = await Promise.all([
+        api.get("/demo/students"),
+        api.get("/demo/fees/month/2026/10"),
+        api.get("/demo/inquiries"),
+      ]);
 
-            axios.get(
-              "http://localhost:5000/api/demo/fees/month/2026/10",
-              { headers }
-            ),
+      const getList = (response, key) => {
+        const data = response?.data;
 
-            axios.get(
-              "http://localhost:5000/api/demo/inquiries",
-              { headers }
-            ),
-          ]);
-
-        if (studentsResponse.data.success) {
-          setDemoStudents(studentsResponse.data.students || []);
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data?.[key])) return data[key];
+        if (Array.isArray(data?.data)) return data.data;
+        if (Array.isArray(data?.data?.[key])) {
+          return data.data[key];
         }
 
-        if (feesResponse.data.success) {
-          setDemoFees(feesResponse.data.fees || []);
-        }
+        return [];
+      };
 
-        if (inquiriesResponse.data.success) {
-          setDemoInquiries(
-            inquiriesResponse.data.inquiries || []
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Unable to load demo dashboard:",
-          error
-        );
-      } finally {
-        setLoading(false);
+      if (!cancelled) {
+        setDemoStudents(getList(studentsResponse, "students"));
+        setDemoFees(getList(feesResponse, "fees"));
+        setDemoInquiries(getList(inquiriesResponse, "inquiries"));
       }
-    };
+    } catch (error) {
+      console.error(
+        "Unable to load demo dashboard:",
+        error.response?.data || error.message
+      );
+    } finally {
+      if (!cancelled) setLoading(false);
+    }
+  };
 
-    loadDemoDashboard();
-  }, []);
+  loadDemoDashboard();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
+
 
     const totalStudents = demoStudents.length;
 
