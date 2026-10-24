@@ -256,4 +256,68 @@ This is a recruiter demonstration using fictional data.`;
   }
 });
 
+router.post("/:id/reminder", async (req, res) => {
+  try {
+    const fee = await DemoFee.findById(req.params.id).populate("student");
+
+    if (!fee) {
+      return res.status(404).json({
+        success: false,
+        message: "Demo fee not found",
+      });
+    }
+
+    const paid = fee.payments.reduce(
+      (sum, payment) => sum + Number(payment.amount || 0),
+      0
+    );
+
+    const pending = Math.max(
+      0,
+      Number(fee.amountDue || 0) - paid
+    );
+
+    if (pending <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No pending fee amount remains",
+      });
+    }
+
+    if (!DEMO_WHATSAPP_NUMBER) {
+      return res.status(500).json({
+        success: false,
+        message: "Demo WhatsApp number is not configured",
+      });
+    }
+
+    const message = `SmartWay Academy DEMO
+
+DEMO FEE REMINDER
+
+Student: ${fee.student?.studentName || "Demo Student"}
+Class: ${fee.student?.className || "-"}
+Fee Month: ${String(fee.month).padStart(2, "0")}/${fee.year}
+Fee Due: ₹${Number(fee.amountDue || 0).toLocaleString("en-IN")}
+Total Paid: ₹${paid.toLocaleString("en-IN")}
+Pending Amount: ₹${pending.toLocaleString("en-IN")}
+Status: ${fee.status}
+
+This is a recruiter demonstration using fictional data. No real payment is requested.`;
+
+    const whatsappUrl = `https://wa.me/${DEMO_WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      message
+    )}`;
+
+    res.json({
+      success: true,
+      whatsappUrl,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 module.exports = router;

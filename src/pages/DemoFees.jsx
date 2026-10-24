@@ -278,7 +278,8 @@ export default function DemoFees() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
 
-          <div className="bg-white rounded-xl shadow p-5">
+          <div className="bg-white border border-blue-200 rounded-2xl shadow-sm p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-blue-300">
+
             <p className="text-sm text-gray-500">
               Total Fee
             </p>
@@ -288,7 +289,7 @@ export default function DemoFees() {
             </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-5">
+          <div className="bg-white border border-green-200 rounded-2xl shadow-sm p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-green-300">
             <p className="text-sm text-gray-500">
               Collected
             </p>
@@ -298,7 +299,7 @@ export default function DemoFees() {
             </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-5">
+          <div className="bg-white border border-orange-200 rounded-2xl shadow-sm p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-orange-300">
             <p className="text-sm text-gray-500">
               Pending
             </p>
@@ -441,6 +442,39 @@ export default function DemoFees() {
                         <td className="px-5 py-4 text-right">
 
                           <div className="flex justify-end gap-2">
+                            
+{pending > 0 && (
+  <button
+    onClick={async () => {
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/api/demo/fees/${fee._id}/reminder`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (response.data.success && response.data.whatsappUrl) {
+          window.open(response.data.whatsappUrl, "_blank");
+        }
+      } catch (err) {
+        console.error(err);
+
+        alert(
+          err.response?.data?.message ||
+            "Unable to open Demo Fee Reminder."
+        );
+      }
+    }}
+    className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+  >
+    Fee Reminder
+  </button>
+)}
+
                             {pending > 0 ? (
                                 <button
                                 onClick={() => openPayment(fee)}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 
 export default function DemoStudents() {
   const navigate = useNavigate();
@@ -15,14 +15,7 @@ export default function DemoStudents() {
       setLoading(true);
       setError("");
 
-      const response = await axios.get(
-  "http://localhost:5000/api/demo/students",
-  {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  }
-);
+      const response =  await api.get("/demo/students");
 
       setStudents(response.data.students || []);
     } catch (err) {
@@ -45,14 +38,7 @@ export default function DemoStudents() {
     if (!confirmed) return;
 
     try {
-      await axios.delete(
-  `http://localhost:5000/api/demo/students/${id}`,
-  {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  }
-);
+      await api.delete(`/demo/students/${id}`);
 
       setStudents((currentStudents) =>
         currentStudents.filter((student) => student._id !== id)
@@ -250,14 +236,9 @@ export default function DemoStudents() {
                           <button
                         onClick={async () => {
                           try {
-                            const response = await axios.post(
-                              `http://localhost:5000/api/demo/students/${student._id}/whatsapp`,
-                              {},
-                              {
-                                headers: {
-                                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                                },
-                              }
+                            const response = await api.post(
+                              `/demo/students/${student._id}/whatsapp`,
+                              {}
                             );
 
                             if (response.data.success && response.data.whatsappUrl) {
