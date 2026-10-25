@@ -8,6 +8,7 @@ export default function DemoDashboard() {
           const [demoFees, setDemoFees] = useState([]);
           const [demoInquiries, setDemoInquiries] = useState([]);
           const [loading, setLoading] = useState(true);
+          const [selectedMonth, setSelectedMonth] = useState("10");
           const navigate = useNavigate();
 
         
@@ -24,7 +25,7 @@ useEffect(() => {
         inquiriesResponse,
       ] = await Promise.all([
         api.get("/demo/students"),
-        api.get("/demo/fees/month/2026/10"),
+        api.get(`/demo/fees/month/2026/${selectedMonth}`),
         api.get("/demo/inquiries"),
       ]);
 
@@ -61,7 +62,7 @@ useEffect(() => {
   return () => {
     cancelled = true;
   };
-}, []);
+}, [selectedMonth]);
 
 
     const totalStudents = demoStudents.length;
@@ -91,19 +92,7 @@ useEffect(() => {
   const totalDue = totalCollected + totalPending;
 
 
-  const paidFees = demoFees.filter(
-  (fee) => fee.status === "Paid"
-).length;
-
-const partialFees = demoFees.filter(
-  (fee) => fee.status === "Partial"
-).length;
-
-const dueFees = demoFees.filter(
-  (fee) => fee.status === "Due"
-).length;
-
-  const totalInquiries = demoInquiries.length;
+ const totalInquiries = demoInquiries.length;
 
   const newInquiries = demoInquiries.filter(
   (inquiry) => inquiry.status === "New"
@@ -122,10 +111,11 @@ const admittedInquiries = demoInquiries.filter(
 ).length;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-        <DemoNavbar />
+    <div className="min-h-screen bg-gray-100">
+  <DemoNavbar />
 
-      <div className="max-w-7xl mx-auto">
+  <div className="p-3 sm:p-6">
+      
                     
         {/* Recruiter Demo Banner */}
 <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white rounded-3xl shadow-xl p-6 md:p-8 mb-8">
@@ -197,7 +187,7 @@ const admittedInquiries = demoInquiries.filter(
           </div>
 
           <div className="bg-white rounded-2xl shadow-md p-6">
-            <p className="text-gray-500">Monthly Collection</p>
+            <p className="text-gray-500">October 2026 Collection</p>
             <h3 className="text-3xl font-bold text-green-600 mt-2">
               {loading ? "..." : `₹${totalCollected.toLocaleString("en-IN")}`}
             </h3>
@@ -307,21 +297,43 @@ const admittedInquiries = demoInquiries.filter(
       {/* Fee Collection Snapshot */}
 <div className="bg-white rounded-3xl shadow-lg p-8 mt-8">
 
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-    <div>
-      <h2 className="text-2xl font-bold text-gray-800">
-        Fee Collection Snapshot
-      </h2>
+  
+<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+  <div>
+    <h2 className="text-2xl font-bold text-gray-800">
+      Fee Collection Snapshot
+    </h2>
 
-      <p className="text-gray-500 mt-1">
-        Current demo fee collection and payment overview.
-      </p>
-    </div>
+    <p className="text-gray-500 mt-1">
+      Collection and pending fees for the selected month.
+    </p>
+  </div>
 
-    <span className="mt-3 md:mt-0 text-sm font-semibold text-gray-500">
+  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+    <label
+      htmlFor="dashboard-month"
+      className="text-sm font-semibold text-gray-600"
+    >
+      Select Month
+    </label>
+
+    <select
+      id="dashboard-month"
+      value={selectedMonth}
+      onChange={(e) => setSelectedMonth(e.target.value)}
+      className="border border-gray-300 bg-white rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="9">September 2026</option>
+      <option value="10">October 2026</option>
+      <option value="11">November 2026</option>
+    </select>
+
+    <span className="text-sm font-semibold text-gray-500">
       Demo Financial Overview
     </span>
   </div>
+</div>
+
 
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 

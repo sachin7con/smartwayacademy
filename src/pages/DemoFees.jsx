@@ -16,9 +16,10 @@ export default function DemoFees() {
   const [paymentMode, setPaymentMode] = useState("UPI");
   const [paymentNote, setPaymentNote] = useState("");
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [generateLoading, setGenerateLoading] = useState(false);
 
-  const year = 2026;
-  const month = 10;
+const year = 2026;
+const [month, setMonth] = useState(10);
 
   const loadFees = async () => {
   try {
@@ -51,9 +52,52 @@ export default function DemoFees() {
   }
 };
 
+const generateFees = async () => {
+  const monthName = new Date(year, month - 1).toLocaleString(
+    "en-IN",
+    { month: "long" }
+  );
+
+  const confirmed = window.confirm(
+    `Generate missing demo fees for ${monthName} ${year}? Existing fees will be skipped.`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    setGenerateLoading(true);
+    setError("");
+
+    const response = await api.post("/demo/fees/generate", {
+      year,
+      month,
+    });
+
+    const result = response.data;
+
+    await loadFees();
+
+    alert(
+      `Demo fees generated for ${monthName} ${year}.\n` +
+      `Created: ${result.created}\n` +
+      `Already existed: ${result.existing}\n` +
+      `Active demo students: ${result.totalStudents}`
+    );
+  } catch (err) {
+    console.error("Unable to generate demo fees:", err);
+
+    alert(
+      err.response?.data?.message ||
+      "Unable to generate demo fees. Please try again."
+    );
+  } finally {
+    setGenerateLoading(false);
+  }
+};
+
   useEffect(() => {
     loadFees();
-  }, []);
+  }, [month]);
 
   const getTotalPaid = (fee) => {
     return (fee.payments || []).reduce(
@@ -250,8 +294,11 @@ export default function DemoFees() {
             </h1>
 
             <p className="text-gray-400 text-sm mt-1">
-              October 2026 · Recruiter Demo
-            </p>
+            {new Date(year, month - 1).toLocaleString("en-IN", {
+              month: "long",
+            })}{" "}
+            {year} · Recruiter Demo
+          </p>
           </div>
 
           <button
@@ -264,7 +311,7 @@ export default function DemoFees() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
 
         {/* Demo Notice */}
         <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-4 mb-6">
@@ -315,17 +362,62 @@ export default function DemoFees() {
         </div>
 
         {/* Search */}
-        <div className="bg-white rounded-xl shadow p-5 mb-6">
+        {/* Month Selector, Generate Fees and Search */}
+<div className="bg-white rounded-xl shadow p-5 mb-6">
+  <div className="flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between">
 
-          <input
-            type="text"
-            placeholder="Search student or class..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 w-full md:w-96 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+    <div className="flex flex-col sm:flex-row gap-3">
+      <div>
+        <label
+          htmlFor="demo-fee-month"
+          className="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          Fee Month
+        </label>
 
-        </div>
+        <select
+          id="demo-fee-month"
+          value={month}
+          onChange={(e) => setMonth(Number(e.target.value))}
+          className="w-full sm:w-48 border border-gray-300 rounded-lg px-4 py-3"
+        >
+          <option value={9}>September 2026</option>
+          <option value={10}>October 2026</option>
+          <option value={11}>November 2026</option>
+        </select>
+      </div>
+
+      <div className="flex items-end">
+        <button
+          onClick={generateFees}
+          disabled={generateLoading || loading}
+          className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 disabled:opacity-60 text-white px-4 py-3 rounded-lg font-semibold"
+        >
+          {generateLoading ? "Generating..." : "Generate Fees"}
+        </button>
+      </div>
+    </div>
+
+    <div className="w-full lg:w-96">
+      <label
+        htmlFor="demo-fee-search"
+        className="block text-sm font-semibold text-gray-700 mb-2"
+      >
+        Search Students
+      </label>
+
+      <input
+        id="demo-fee-search"
+        type="text"
+        placeholder="Search student or class..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border border-gray-300 rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+
+  </div>
+</div>
 
         {/* Loading */}
         {loading && (
@@ -345,7 +437,7 @@ export default function DemoFees() {
         {!loading && !error && (
           <div className="bg-white rounded-xl shadow overflow-hidden">
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto overscroll-x-contain">
 
               <table className="w-full">
 
@@ -444,7 +536,7 @@ export default function DemoFees() {
 
                         <td className="px-5 py-4 text-right">
 
-                          <div className="flex justify-end gap-2">
+                          <div className="flex flex-wrap justify-end gap-2 min-w-[220px]">
                             
 {pending > 0 && (
   <button
@@ -464,9 +556,7 @@ export default function DemoFees() {
         );
       }
 
-        if (response.data.success && response.data.whatsappUrl) {
-          window.open(response.data.whatsappUrl, "_blank");
-        }
+        
       } catch (err) {
         console.error(err);
 
@@ -522,9 +612,7 @@ export default function DemoFees() {
           );
         }
 
-        if (response.data.success && response.data.whatsappUrl) {
-          window.open(response.data.whatsappUrl, "_blank");
-        }
+        
       } catch (err) {
         console.error(err);
 
