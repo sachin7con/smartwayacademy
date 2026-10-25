@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 
 export default function DemoInquiries() {
   const navigate = useNavigate();
@@ -11,30 +11,35 @@ export default function DemoInquiries() {
   const [search, setSearch] = useState("");
 
   const loadInquiries = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/demo/inquiries",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+  try {
+    setLoading(true);
 
-      if (response.data.success) {
-        setInquiries(response.data.inquiries);
-      }
-    } catch (error) {
-      console.error(error);
+    const response = await api.get("/demo/inquiries");
+    const data = response.data;
 
-      alert(
-        error.response?.data?.message ||
-          "Unable to load demo inquiries."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    const list = Array.isArray(data?.inquiries)
+      ? data.inquiries
+      : Array.isArray(data?.data?.inquiries)
+      ? data.data.inquiries
+      : Array.isArray(data)
+      ? data
+      : [];
+
+    setInquiries(list);
+  } catch (error) {
+    console.error(
+      "Unable to load demo inquiries:",
+      error.response?.data || error.message
+    );
+
+    alert(
+      error.response?.data?.message ||
+        "Unable to load demo inquiries."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadInquiries();
@@ -45,27 +50,16 @@ export default function DemoInquiries() {
   try {
     setUpdatingId(id);
 
-    const response = await axios.put(
-      `http://localhost:5000/api/demo/inquiries/${id}`,
-      {
-        status,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
+    const response = await api.put(
+      `/demo/inquiries/${id}`,
+      { status }
     );
 
-    if (response.data.success) {
-      setInquiries((current) =>
-        current.map((item) =>
-          item._id === id
-            ? { ...item, status: response.data.inquiry.status }
-            : item
-        )
-      );
-    }
+    setInquiries((current) =>
+  current.map((item) =>
+    item._id === id ? { ...item, status } : item
+  )
+);
   } catch (error) {
     console.error(error);
 
@@ -80,30 +74,16 @@ export default function DemoInquiries() {
 
 const updateRemarks = async (id, remarks) => {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/demo/inquiries/${id}`,
-      {
-        remarks,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
+    const response = await api.put(
+      `/demo/inquiries/${id}`,
+      { remarks }
     );
 
-    if (response.data.success) {
-      setInquiries((current) =>
-        current.map((item) =>
-          item._id === id
-            ? {
-                ...item,
-                remarks: response.data.inquiry.remarks,
-              }
-            : item
-        )
-      );
-    }
+    setInquiries((current) =>
+      current.map((item) =>
+        item._id === id ? { ...item, remarks } : item
+      )
+    );
   } catch (error) {
     console.error(error);
 
@@ -366,19 +346,21 @@ const filteredInquiries = inquiries.filter((inquiry) => {
   <button
     onClick={async () => {
       try {
-        const response = await axios.post(
-          `http://localhost:5000/api/demo/inquiries/${inquiry._id}/whatsapp`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+        const response = await api.post(
+          `/demo/inquiries/${inquiry._id}/whatsapp`,
+          {}
         );
 
-        if (response.data.success && response.data.whatsappUrl) {
+        if (response.data?.whatsappUrl) {
           window.open(response.data.whatsappUrl, "_blank");
+        } else {
+          alert(
+            response.data?.message ||
+              "Demo WhatsApp link was not returned."
+          );
         }
+
+        
       } catch (error) {
         console.error(error);
 
